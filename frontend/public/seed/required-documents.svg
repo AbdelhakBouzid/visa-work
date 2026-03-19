@@ -1,0 +1,13 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="40" fill="#F8FAFC"/>
+  <circle cx="1018" cy="150" r="118" fill="#F2BF46" fill-opacity="0.22"/>
+  <rect x="168" y="94" width="400" height="512" rx="34" fill="#FFFFFF" stroke="#D9E8EF" stroke-width="8"/>
+  <rect x="232" y="164" width="270" height="22" rx="11" fill="#234658"/>
+  <rect x="232" y="226" width="212" height="16" rx="8" fill="#8BB5CA"/>
+  <rect x="232" y="280" width="204" height="16" rx="8" fill="#8BB5CA"/>
+  <rect x="232" y="334" width="228" height="16" rx="8" fill="#8BB5CA"/>
+  <rect x="232" y="388" width="186" height="16" rx="8" fill="#8BB5CA"/>
+  <circle cx="810" cy="320" r="126" fill="#234658"/>
+  <path d="M756 322L794 360L864 280" stroke="#F2BF46" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="596" y="560" fill="#10232E" font-size="62" font-family="Tahoma, sans-serif" font-weight="700">Required Documents Checklist</text>
+</svg>

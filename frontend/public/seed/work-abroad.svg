@@ -1,0 +1,10 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="40" fill="#F5F9FB"/>
+  <rect x="70" y="76" width="1060" height="548" rx="32" fill="#FFFFFF"/>
+  <circle cx="1020" cy="140" r="110" fill="#F2BF46" fill-opacity="0.25"/>
+  <circle cx="160" cy="160" r="96" fill="#8BB5CA" fill-opacity="0.28"/>
+  <path d="M224 464C290 346 420 290 550 290C691 290 813 350 902 470" stroke="#234658" stroke-width="26" stroke-linecap="round"/>
+  <path d="M346 470L550 246L778 470" stroke="#2E5A71" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="550" cy="246" r="34" fill="#F2BF46"/>
+  <text x="328" y="572" fill="#10232E" font-size="64" font-family="Tahoma, sans-serif" font-weight="700">Work Abroad Opportunities</text>
+</svg>

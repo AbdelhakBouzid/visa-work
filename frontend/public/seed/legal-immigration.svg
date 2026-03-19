@@ -1,0 +1,11 @@
+<svg width="1200" height="700" viewBox="0 0 1200 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="700" rx="40" fill="#183644"/>
+  <rect x="116" y="108" width="968" height="484" rx="36" fill="#10232E"/>
+  <path d="M210 460C310 350 440 290 604 290C744 290 854 334 982 452" stroke="#5D93AE" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="604" cy="290" r="38" fill="#F2BF46"/>
+  <rect x="246" y="204" width="194" height="84" rx="24" fill="#F8FAFC"/>
+  <rect x="762" y="204" width="194" height="84" rx="24" fill="#F8FAFC"/>
+  <text x="284" y="258" fill="#10232E" font-size="28" font-family="Tahoma, sans-serif" font-weight="700">Job Offer</text>
+  <text x="804" y="258" fill="#10232E" font-size="28" font-family="Tahoma, sans-serif" font-weight="700">Residency</text>
+  <text x="258" y="560" fill="#F8FAFC" font-size="62" font-family="Tahoma, sans-serif" font-weight="700">Legal Immigration Guide</text>
+</svg>

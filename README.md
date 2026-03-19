@@ -1,0 +1,92 @@
+﻿# visa-work
+
+منصة عربية كاملة بنظام RTL مخصصة للعمل بالخارج، تأشيرات العمل، الهجرة القانونية، الوثائق المطلوبة، وطرق دفع رسوم التأشيرة.
+
+## التقنية
+
+- `frontend`: React + Vite + TailwindCSS + React Router
+- `backend`: Node.js + Express
+- `database`: MongoDB + Mongoose
+- `auth`: JWT + bcryptjs
+
+## المزايا
+
+- واجهة عامة عربية احترافية ومتجاوبة
+- لوحة إدارة محمية لتسيير المقالات والتصنيفات والإعدادات
+- صفحات: الرئيسية، المقالات، المقال المفرد، التصنيف، البحث، من نحن، اتصل بنا، الخصوصية، و404
+- إدارة المقالات مع slug وSEO ووسوم وصور وحالة نشر
+- إدارة الصفحة الرئيسية والمقالات المميزة والتصنيفات المبرزة
+- رفع صور محلي إلى `backend/uploads`
+- بيانات seed جاهزة
+
+## التشغيل
+
+1. أنشئ ملف البيئة `backend/.env` عبر نسخ القيم من `backend/.env.example`.
+2. ثبّت الاعتماديات:
+
+```bash
+npm install
+```
+
+3. شغّل بيانات البداية:
+
+```bash
+npm run seed
+```
+
+4. شغّل المشروع:
+
+```bash
+npm run dev
+```
+
+## الروابط الافتراضية
+
+- الواجهة: `http://localhost:5173`
+- الـ API: `http://localhost:5000/api`
+
+## حساب المدير الافتراضي
+
+- البريد: `admin@visa-work.com`
+- كلمة المرور: `Admin@123456`
+
+يمكن تغييرهما من `backend/.env` قبل تنفيذ `npm run seed`.
+
+## أوامر مهمة
+
+```bash
+npm run dev
+npm run dev:frontend
+npm run dev:backend
+npm run build
+npm run seed
+npm run start
+```
+
+## API الأساسية
+
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET /api/auth/me`
+- `GET /api/articles`
+- `GET /api/articles/:slug`
+- `POST /api/articles`
+- `PUT /api/articles/:id`
+- `DELETE /api/articles/:id`
+- `GET /api/categories`
+- `POST /api/categories`
+- `PUT /api/categories/:id`
+- `DELETE /api/categories/:id`
+- `GET /api/settings`
+- `PUT /api/settings`
+- `GET /api/dashboard/stats`
+- `POST /api/uploads/image`
+- `GET /api/public/home`
+- `POST /api/public/contact`
+- `POST /api/public/newsletter`
+
+## التحقق
+
+- نجح `npm run build` للواجهة الأمامية.
+- نجح فحص الصياغة لملفات backend الأساسية.
+- تشغيل الخادم فعلياً يحتاج MongoDB متاحاً محلياً أو عبر Atlas.
