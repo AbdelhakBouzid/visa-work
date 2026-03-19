@@ -63,6 +63,28 @@ npm run seed
 npm run start
 ```
 
+## النشر على Vercel كمشروع واحد
+
+- اترك `Root Directory` على `./`
+- اجعل `Framework Preset` = `Other` أو `Vite`
+- يعتمد المشروع على الملف [vercel.json](/C:/Users/ABDELHAK/Desktop/project/visa-work/vercel.json) الموجود في الجذر
+- الـ frontend سيُبنى من `frontend/dist`
+- الـ API سيعمل من خلال `api/index.js` و `api/[...path].js`
+
+### متغيرات Vercel المطلوبة
+
+- `MONGO_URI`
+- `JWT_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `CLIENT_URL`
+
+### متغير مهم لرفع الصور على Vercel
+
+- `BLOB_READ_WRITE_TOKEN`
+
+بدون `BLOB_READ_WRITE_TOKEN` سيعمل الموقع، لكن رفع الصور من لوحة الإدارة لن يعمل بشكل دائم على Vercel.
+
 ## API الأساسية
 
 - `POST /api/auth/login`

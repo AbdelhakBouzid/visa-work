@@ -1,3 +1,4 @@
+import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { Router } from 'express';
@@ -9,21 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.resolve(__dirname, '../../uploads');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadDir);
-  },
-  filename: (req, file, cb) => {
-    const extension = path.extname(file.originalname) || '.jpg';
-    const baseName = path
-      .basename(file.originalname, extension)
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
-
-    cb(null, `${baseName || 'upload'}-${Date.now()}${extension}`);
-  }
-});
+fs.mkdirSync(uploadDir, { recursive: true });
 
 const fileFilter = (req, file, cb) => {
   if (!file.mimetype.startsWith('image/')) {
@@ -35,7 +22,7 @@ const fileFilter = (req, file, cb) => {
 };
 
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   fileFilter,
   limits: {
     fileSize: 4 * 1024 * 1024
