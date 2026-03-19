@@ -1,16 +1,28 @@
 import jwt from 'jsonwebtoken';
-import { asyncHandler } from '../utils/asyncHandler.js';
 import { User } from '../models/User.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
+import { completeInitialAdminSetup, getSetupStatus } from '../utils/bootstrapInitialData.js';
 
 const createToken = (userId) =>
   jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '7d'
   });
 
-export const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+const sanitizeUser = (user) => ({
+  _id: user._id,
+  name: user.name,
+  username: user.username,
+  email: user.email,
+  role: user.role
+});
 
-  const user = await User.findOne({ email: email.toLowerCase() });
+export const login = asyncHandler(async (req, res) => {
+  const identifier = (req.body.identifier || req.body.email || '').trim().toLowerCase();
+  const { password } = req.body;
+
+  const user = await User.findOne({
+    $or: [{ username: identifier }, { email: identifier }]
+  });
 
   if (!user) {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
@@ -24,12 +36,7 @@ export const login = asyncHandler(async (req, res) => {
 
   res.json({
     token: createToken(user._id),
-    user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role
-    }
+    user: sanitizeUser(user)
   });
 });
 
@@ -39,4 +46,23 @@ export const logout = asyncHandler(async (req, res) => {
 
 export const me = asyncHandler(async (req, res) => {
   res.json({ user: req.user });
+});
+
+export const setupStatus = asyncHandler(async (req, res) => {
+  const status = await getSetupStatus();
+  res.json(status);
+});
+
+export const initialSetup = asyncHandler(async (req, res) => {
+  const user = await completeInitialAdminSetup({
+    username: req.body.username,
+    password: req.body.password,
+    name: req.body.name
+  });
+
+  res.status(201).json({
+    message: 'تم إنشاء حساب المدير بنجاح.',
+    token: createToken(user._id),
+    user: sanitizeUser(user)
+  });
 });

@@ -6,22 +6,20 @@ import { Category } from '../models/Category.js';
 import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from './data.js';
+import { createSlug } from '../utils/createSlug.js';
 
 dotenv.config();
 
 const runSeed = async () => {
   await connectDB();
 
-  await Promise.all([
-    Article.deleteMany({}),
-    Category.deleteMany({}),
-    Settings.deleteMany({}),
-    User.deleteMany({})
-  ]);
+  await Promise.all([Article.deleteMany({}), Category.deleteMany({}), Settings.deleteMany({}), User.deleteMany({})]);
 
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@visa-work.com';
   const admin = await User.create({
     name: 'مدير الموقع',
-    email: process.env.ADMIN_EMAIL || 'admin@visa-work.com',
+    username: (process.env.ADMIN_USERNAME || createSlug(adminEmail.split('@')[0], 'admin')).toLowerCase(),
+    email: adminEmail,
     password: process.env.ADMIN_PASSWORD || 'Admin@123456',
     role: 'admin'
   });
@@ -49,8 +47,7 @@ const runSeed = async () => {
 
   const settings = await Settings.create({
     siteName: 'visa-work',
-    siteDescription:
-      'منصة عربية حديثة لمتابعة فرص العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.',
+    siteDescription: 'منصة عربية حديثة لمتابعة فرص العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.',
     footerText: 'visa-work - منصة عربية مهنية للمقالات والأدلة الخاصة بالعمل بالخارج.',
     contactEmail: 'contact@visa-work.com',
     socialLinks: {
@@ -80,6 +77,7 @@ const runSeed = async () => {
   });
 
   console.log('Seed completed successfully');
+  console.log(`Admin username: ${admin.username}`);
   console.log(`Admin email: ${admin.email}`);
   console.log(`Admin password: ${process.env.ADMIN_PASSWORD || 'Admin@123456'}`);
   console.log(`Settings created: ${settings.siteName}`);

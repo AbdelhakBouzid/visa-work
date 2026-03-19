@@ -29,19 +29,32 @@ export function AuthProvider({ children }) {
       });
   }, []);
 
-  const login = async (credentials) => {
-    const response = await authApi.login(credentials).catch((error) => {
-      throw new Error(extractApiError(error, 'فشل تسجيل الدخول.'));
-    });
-
+  const persistSession = (response) => {
     localStorage.setItem('visa-work-token', response.token);
     setUser(response.user);
     return response;
   };
 
+  const login = async (credentials) => {
+    const response = await authApi.login(credentials).catch((error) => {
+      throw new Error(extractApiError(error, 'فشل تسجيل الدخول.'));
+    });
+
+    return persistSession(response);
+  };
+
+  const completeInitialSetup = async (payload) => {
+    const response = await authApi.initialSetup(payload).catch((error) => {
+      throw new Error(extractApiError(error, 'فشل إنشاء حساب المدير.'));
+    });
+
+    return persistSession(response);
+  };
+
   const logout = async () => {
     localStorage.removeItem('visa-work-token');
     setUser(null);
+
     try {
       await authApi.logout();
     } catch (error) {
@@ -57,6 +70,7 @@ export function AuthProvider({ children }) {
       loading,
       isAuthenticated: Boolean(user),
       login,
+      completeInitialSetup,
       logout
     }),
     [user, loading]

@@ -33,6 +33,8 @@ export const publicApi = {
 };
 
 export const authApi = {
+  getSetupStatus: async () => (await api.get('/auth/setup-status')).data,
+  initialSetup: async (payload) => (await api.post('/auth/setup', payload)).data,
   login: async (payload) => (await api.post('/auth/login', payload)).data,
   logout: async () => (await api.post('/auth/logout')).data,
   me: async () => (await api.get('/auth/me')).data
