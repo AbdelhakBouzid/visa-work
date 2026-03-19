@@ -14,6 +14,7 @@ import publicRoutes from './routes/publicRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
+import { bootstrapInitialData } from './utils/bootstrapInitialData.js';
 
 dotenv.config();
 
@@ -23,19 +24,33 @@ const uploadsDir = path.resolve(__dirname, '../uploads');
 const app = express();
 
 let dbConnectionPromise;
+let bootstrapPromise;
+let dbLastError = null;
 
 const ensureDatabaseConnection = async () => {
   if (!dbConnectionPromise) {
-    dbConnectionPromise = connectDB().catch((error) => {
-      dbConnectionPromise = null;
-      throw error;
-    });
+    dbConnectionPromise = connectDB()
+      .then(async () => {
+        dbLastError = null;
+
+        if (!bootstrapPromise) {
+          bootstrapPromise = bootstrapInitialData().catch((error) => {
+            bootstrapPromise = null;
+            throw error;
+          });
+        }
+
+        await bootstrapPromise;
+      })
+      .catch((error) => {
+        dbLastError = error;
+        dbConnectionPromise = null;
+        throw error;
+      });
   }
 
   return dbConnectionPromise;
 };
-
-await ensureDatabaseConnection();
 
 app.use(
   helmet({
@@ -53,8 +68,30 @@ app.use(express.json({ limit: '4.5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsDir));
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
+app.get('/api/health', async (req, res) => {
+  try {
+    await ensureDatabaseConnection();
+
+    res.json({
+      status: 'ok',
+      database: 'connected'
+    });
+  } catch (error) {
+    res.status(503).json({
+      status: 'error',
+      database: 'disconnected',
+      message: error.message || dbLastError?.message || 'Database connection failed.'
+    });
+  }
+});
+
+app.use('/api', async (req, res, next) => {
+  try {
+    await ensureDatabaseConnection();
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.use('/api/auth', authRoutes);
