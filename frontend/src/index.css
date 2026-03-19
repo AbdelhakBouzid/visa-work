@@ -41,9 +41,11 @@ a {
 }
 
 .hero-pattern {
+  background-color: #10232e;
   background-image:
-    radial-gradient(circle at top right, rgba(242, 191, 70, 0.16), transparent 34%),
-    radial-gradient(circle at bottom left, rgba(93, 147, 174, 0.18), transparent 25%);
+    radial-gradient(circle at top right, rgba(242, 191, 70, 0.18), transparent 30%),
+    radial-gradient(circle at bottom left, rgba(93, 147, 174, 0.2), transparent 24%),
+    linear-gradient(135deg, #10232e 0%, #234658 55%, #2e5a71 100%);
 }
 
 .article-content {

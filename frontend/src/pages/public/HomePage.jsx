@@ -67,17 +67,17 @@ function HomePage() {
     <>
       <Seo title={settings?.siteName} description={settings?.siteDescription} />
 
-      <section className="hero-pattern bg-hero text-white">
+      <section className="hero-pattern text-white">
         <div className="page-shell grid gap-8 py-16 md:grid-cols-[1.1fr_0.9fr] md:py-24">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white/90">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-semibold text-white/90 shadow-soft">
               <Sparkles className="h-4 w-4" />
               منصة عربية حديثة لدلائل العمل والتأشيرات
             </div>
             <h1 className="mt-6 text-4xl font-black leading-tight md:text-6xl">
               {settings?.home?.heroTitle || 'ابدأ رحلتك نحو العمل بالخارج بخطوات واضحة وموثوقة'}
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-white/80 md:text-lg">
+            <p className="mt-5 max-w-2xl text-base leading-8 text-white/85 md:text-lg">
               {settings?.home?.heroSubtitle}
             </p>
             <div className="mt-8 max-w-2xl">
@@ -99,17 +99,20 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="surface-card overflow-hidden bg-white/10 p-5 text-white">
+          <div className="overflow-hidden rounded-[32px] border border-white/10 bg-slate-950/18 p-5 text-white shadow-soft backdrop-blur">
             <div className="grid gap-4 md:grid-cols-2">
               {featureCards.map((card) => {
                 const Icon = card.icon;
                 return (
-                  <div key={card.title} className="rounded-[26px] border border-white/10 bg-white/5 p-5">
-                    <div className="inline-flex rounded-2xl bg-white/10 p-3">
+                  <div
+                    key={card.title}
+                    className="rounded-[26px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm"
+                  >
+                    <div className="inline-flex rounded-2xl bg-white/10 p-3 text-accent-200">
                       <Icon className="h-5 w-5" />
                     </div>
                     <h2 className="mt-4 text-lg font-bold">{card.title}</h2>
-                    <p className="mt-2 text-sm leading-7 text-white/75">{card.description}</p>
+                    <p className="mt-2 text-sm leading-7 text-white/80">{card.description}</p>
                   </div>
                 );
               })}
