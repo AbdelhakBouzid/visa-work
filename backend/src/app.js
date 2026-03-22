@@ -22,6 +22,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsDir = path.resolve(__dirname, '../uploads');
 const app = express();
+const isVercel = Boolean(process.env.VERCEL);
 
 let dbConnectionPromise;
 let bootstrapPromise;
@@ -68,7 +69,9 @@ app.use(express.json({ limit: '4.5mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use('/uploads', express.static(uploadsDir));
 
-app.get('/api/health', async (req, res) => {
+const healthPaths = isVercel ? ['/api/health', '/health'] : ['/api/health'];
+
+app.get(healthPaths, async (req, res) => {
   try {
     await ensureDatabaseConnection();
 
@@ -85,7 +88,9 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-app.use('/api', async (req, res, next) => {
+const apiMountPaths = isVercel ? ['/api', '/'] : ['/api'];
+
+app.use(apiMountPaths, async (req, res, next) => {
   try {
     await ensureDatabaseConnection();
     next();
@@ -94,13 +99,17 @@ app.use('/api', async (req, res, next) => {
   }
 });
 
-app.use('/api/auth', authRoutes);
-app.use('/api/articles', articleRoutes);
-app.use('/api/categories', categoryRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api/public', publicRoutes);
-app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/uploads', uploadRoutes);
+for (const mountPath of apiMountPaths) {
+  const routePath = (suffix) => (mountPath === '/' ? suffix : `${mountPath}${suffix}`);
+
+  app.use(routePath('/auth'), authRoutes);
+  app.use(routePath('/articles'), articleRoutes);
+  app.use(routePath('/categories'), categoryRoutes);
+  app.use(routePath('/settings'), settingsRoutes);
+  app.use(routePath('/public'), publicRoutes);
+  app.use(routePath('/dashboard'), dashboardRoutes);
+  app.use(routePath('/uploads'), uploadRoutes);
+}
 
 app.use(notFound);
 app.use(errorHandler);
