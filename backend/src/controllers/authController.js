@@ -20,9 +20,17 @@ export const login = asyncHandler(async (req, res) => {
   const identifier = (req.body.identifier || req.body.email || '').trim().toLowerCase();
   const { password } = req.body;
 
-  const user = await User.findOne({
+  let user = await User.findOne({
     $or: [{ username: identifier }, { email: identifier }]
   });
+
+  if (!user && identifier.includes('@')) {
+    const emailLocalPart = identifier.split('@')[0];
+
+    if (emailLocalPart) {
+      user = await User.findOne({ username: emailLocalPart });
+    }
+  }
 
   if (!user) {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
