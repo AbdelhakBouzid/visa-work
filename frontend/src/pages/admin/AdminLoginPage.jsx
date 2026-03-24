@@ -6,6 +6,8 @@ import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
 import { authApi, extractApiError } from '../../services/api';
 
+const DEFAULT_ADMIN_USERNAME = 'Abdelhak26';
+const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
 function AdminLoginPage() {
   const { login, completeInitialSetup } = useAuth();
   const navigate = useNavigate();
@@ -14,12 +16,15 @@ function AdminLoginPage() {
   const [needsSetup, setNeedsSetup] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [autoLoginTried, setAutoLoginTried] = useState(false);
+  const [loginForm, setLoginForm] = useState({
+    username: DEFAULT_ADMIN_USERNAME
+  });
   const [setupForm, setSetupForm] = useState({
-    name: '',
-    username: '',
-    password: '',
-    confirmPassword: ''
+    name: 'Abdelhak',
+    username: DEFAULT_ADMIN_USERNAME,
+    password: DEFAULT_ADMIN_PASSWORD,
+    confirmPassword: DEFAULT_ADMIN_PASSWORD
   });
 
   useEffect(() => {
@@ -56,6 +61,27 @@ function AdminLoginPage() {
     navigate(location.state?.from?.pathname || '/admin', { replace: true });
   };
 
+  useEffect(() => {
+    if (setupLoading || needsSetup || autoLoginTried) {
+      return;
+    }
+
+    setAutoLoginTried(true);
+    setSubmitting(true);
+    setError('');
+
+    login({ identifier: DEFAULT_ADMIN_USERNAME })
+      .then(() => {
+        goToAdmin();
+      })
+      .catch((submitError) => {
+        setError(submitError.message);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }, [autoLoginTried, goToAdmin, login, needsSetup, setupLoading]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitting(true);
@@ -74,8 +100,7 @@ function AdminLoginPage() {
         });
       } else {
         await login({
-          identifier: loginForm.username,
-          password: loginForm.password
+          identifier: loginForm.username
         });
       }
 
@@ -128,7 +153,7 @@ function AdminLoginPage() {
                   <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
                     {needsSetup
                       ? 'اختر اسم المستخدم وكلمة المرور التي تريد الاعتماد عليهما لاحقاً. هذه الخطوة تظهر مرة واحدة فقط.'
-                      : 'نفس أسلوب الدخول المباشر: اسم مستخدم وكلمة مرور للوصول السريع إلى لوحة الإدارة.'}
+                      : 'محاولة دخول مباشرة تلقائياً. إذا فشلت، أدخل اسم المستخدم واضغط دخول.'}
                   </p>
                 </div>
 
@@ -158,7 +183,7 @@ function AdminLoginPage() {
                         value={setupForm.username}
                         onChange={(event) => setSetupForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="مثال: abdelhak_admin"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_USERNAME}`}
                       />
                     </label>
 
@@ -192,27 +217,17 @@ function AdminLoginPage() {
                   <>
                     <label className="block">
                       <span className="mb-2 block text-sm font-semibold text-slate-700">
-                        اسم المستخدم أو البريد الإلكتروني
+                        اسم المستخدم
                       </span>
                       <input
                         type="text"
                         value={loginForm.username}
                         onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="مثال: admin أو admin@visa-work.com"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_USERNAME}`}
                       />
                     </label>
 
-                    <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">كلمة المرور</span>
-                      <input
-                        type="password"
-                        value={loginForm.password}
-                        onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="اكتب كلمة المرور"
-                      />
-                    </label>
                   </>
                 )}
 
@@ -240,7 +255,7 @@ function AdminLoginPage() {
               <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs leading-6 text-slate-500">
                 {needsSetup
                   ? 'بعد الحفظ سيتم حفظ اسم المستخدم وكلمة المرور في قاعدة البيانات، وبعدها ستستخدمهما لكل دخول لاحق.'
-                  : 'إذا كنت تتوقع ظهور شاشة الإعداد الأولي فهذا يعني غالباً أن حساب المدير موجود بالفعل في قاعدة البيانات.'}
+                  : 'الدخول يتم مباشرة باسم المستخدم فقط دون الحاجة إلى كلمة مرور.'}
               </div>
             </div>
           </div>

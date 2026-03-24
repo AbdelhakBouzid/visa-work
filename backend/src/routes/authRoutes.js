@@ -16,7 +16,6 @@ router.post(
       .withMessage('اسم المستخدم يجب أن يكون بين 3 و30 حرفاً.')
       .matches(/^[a-zA-Z0-9._-]+$/)
       .withMessage('اسم المستخدم يجب أن يحتوي على أحرف إنجليزية أو أرقام أو . أو _ أو -.'),
-    body('password').isLength({ min: 6 }).withMessage('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.'),
     body('name')
       .optional({ values: 'falsy' })
       .trim()
@@ -30,10 +29,10 @@ router.post(
   '/login',
   [
     body('identifier').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
+    body('username').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
     body('email').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
-    body('password').isLength({ min: 6 }).withMessage('يجب أن تتكون كلمة المرور من 6 أحرف على الأقل.'),
     body().custom((value) => {
-      if (!value.identifier && !value.email) {
+      if (!value.identifier && !value.username && !value.email) {
         throw new Error('يرجى إدخال اسم المستخدم أو البريد الإلكتروني.');
       }
 

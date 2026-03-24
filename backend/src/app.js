@@ -1,6 +1,5 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
@@ -15,8 +14,9 @@ import dashboardRoutes from './routes/dashboardRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { bootstrapInitialData } from './utils/bootstrapInitialData.js';
+import { loadEnv } from './utils/loadEnv.js';
 
-dotenv.config();
+loadEnv();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
