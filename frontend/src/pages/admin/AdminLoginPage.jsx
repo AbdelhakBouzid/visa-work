@@ -42,7 +42,13 @@ function AdminLoginPage() {
           return;
         }
 
-        setError(extractApiError(setupError, 'تعذر التحقق من حالة الإعداد الأولي. حاول تحديث الصفحة.'));
+        setNeedsSetup(true);
+        setError(
+          extractApiError(
+            setupError,
+            'تعذر التحقق من حالة الإعداد الأولي، تم عرض نموذج الإعداد كخيار آمن. يمكنك المتابعة.'
+          )
+        );
       })
       .finally(() => {
         if (active) {

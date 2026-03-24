@@ -10,10 +10,12 @@ const userSchema = new mongoose.Schema(
     },
     username: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
+      sparse: true,
       lowercase: true,
-      trim: true
+      trim: true,
+      default: null
     },
     email: {
       type: String,
@@ -25,8 +27,9 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: true,
-      minlength: 6
+      required: false,
+      minlength: 6,
+      default: null
     },
     role: {
       type: String,
@@ -42,7 +45,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre('save', async function preSave(next) {
-  if (!this.isModified('password')) {
+  if (!this.isModified('password') || !this.password) {
     next();
     return;
   }
