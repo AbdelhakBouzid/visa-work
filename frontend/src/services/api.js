@@ -13,13 +13,23 @@ const resolveApiBaseUrl = () => {
 
   try {
     const resolvedUrl = new URL(configuredBaseUrl, window.location.origin);
+    const normalizedPath = resolvedUrl.pathname.replace(/\/+$/, '');
+    const hasApiPrefix = normalizedPath === '/api' || normalizedPath.endsWith('/api');
 
     if (window.location.protocol === 'https:' && resolvedUrl.protocol === 'http:') {
       console.warn('Ignoring insecure VITE_API_URL on HTTPS page and falling back to /api.');
       return '/api';
     }
 
-    return configuredBaseUrl;
+    if (resolvedUrl.origin === window.location.origin) {
+      return hasApiPrefix ? `${normalizedPath || '/api'}` : '/api';
+    }
+
+    if (hasApiPrefix) {
+      return `${resolvedUrl.origin}${normalizedPath}`;
+    }
+
+    return `${resolvedUrl.origin}${normalizedPath || ''}/api`;
   } catch {
     return '/api';
   }
