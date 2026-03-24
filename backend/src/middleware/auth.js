@@ -19,7 +19,7 @@ export const requireAuth = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'visa-work-jwt-fallback-secret');
     const user = await User.findById(decoded.userId).select('-password');
 
     if (!user) {
@@ -42,7 +42,7 @@ export const optionalAuth = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'visa-work-jwt-fallback-secret');
     const user = await User.findById(decoded.userId).select('-password');
 
     if (user) {
