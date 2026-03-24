@@ -1,7 +1,32 @@
 import axios from 'axios';
 
+const resolveApiBaseUrl = () => {
+  const configuredBaseUrl = import.meta.env.VITE_API_URL?.trim();
+
+  if (!configuredBaseUrl) {
+    return '/api';
+  }
+
+  if (typeof window === 'undefined') {
+    return configuredBaseUrl;
+  }
+
+  try {
+    const resolvedUrl = new URL(configuredBaseUrl, window.location.origin);
+
+    if (window.location.protocol === 'https:' && resolvedUrl.protocol === 'http:') {
+      console.warn('Ignoring insecure VITE_API_URL on HTTPS page and falling back to /api.');
+      return '/api';
+    }
+
+    return configuredBaseUrl;
+  } catch {
+    return '/api';
+  }
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api'
+  baseURL: resolveApiBaseUrl()
 });
 
 api.interceptors.request.use((config) => {
