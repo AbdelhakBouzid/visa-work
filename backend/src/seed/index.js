@@ -15,12 +15,12 @@ const runSeed = async () => {
 
   await Promise.all([Article.deleteMany({}), Category.deleteMany({}), Settings.deleteMany({}), User.deleteMany({})]);
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@visa-work.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'abdelhak26@visa-work.com';
   const admin = await User.create({
     name: 'مدير الموقع',
     username: (process.env.ADMIN_USERNAME || createSlug(adminEmail.split('@')[0], 'admin')).toLowerCase(),
     email: adminEmail,
-    password: process.env.ADMIN_PASSWORD || 'Admin@123456',
+    password: process.env.ADMIN_PASSWORD || 'ABDObzd@@2001',
     role: 'admin'
   });
 
@@ -79,7 +79,7 @@ const runSeed = async () => {
   console.log('Seed completed successfully');
   console.log(`Admin username: ${admin.username}`);
   console.log(`Admin email: ${admin.email}`);
-  console.log(`Admin password: ${process.env.ADMIN_PASSWORD || 'Admin@123456'}`);
+  console.log(`Admin password: ${process.env.ADMIN_PASSWORD || 'ABDObzd@@2001'}`);
   console.log(`Settings created: ${settings.siteName}`);
 
   await mongoose.connection.close();
