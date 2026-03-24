@@ -47,8 +47,8 @@ npm run dev
 
 ## حساب المدير الافتراضي
 
-- البريد: `admin@visa-work.com`
-- كلمة المرور: `Admin@123456`
+- اسم المستخدم: `Abdelhak26`
+- كلمة المرور: `ABDObzd@@2001`
 
 يمكن تغييرهما من `backend/.env` قبل تنفيذ `npm run seed`.
 
