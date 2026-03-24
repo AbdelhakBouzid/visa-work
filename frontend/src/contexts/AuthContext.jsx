@@ -37,7 +37,9 @@ export function AuthProvider({ children }) {
 
   const login = async (credentials) => {
     const response = await authApi.login(credentials).catch((error) => {
-      throw new Error(extractApiError(error, 'فشل تسجيل الدخول.'));
+      const parsedError = new Error(extractApiError(error, 'فشل تسجيل الدخول.'));
+      parsedError.response = error.response;
+      throw parsedError;
     });
 
     return persistSession(response);
@@ -45,7 +47,9 @@ export function AuthProvider({ children }) {
 
   const completeInitialSetup = async (payload) => {
     const response = await authApi.initialSetup(payload).catch((error) => {
-      throw new Error(extractApiError(error, 'فشل إنشاء حساب المدير.'));
+      const parsedError = new Error(extractApiError(error, 'فشل إنشاء حساب المدير.'));
+      parsedError.response = error.response;
+      throw parsedError;
     });
 
     return persistSession(response);

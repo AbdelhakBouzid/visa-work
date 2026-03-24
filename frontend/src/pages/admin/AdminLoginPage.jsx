@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
-import { authApi } from '../../services/api';
+import { authApi, extractApiError } from '../../services/api';
 
 const normalizeUsername = (value) => value.trim().toLowerCase();
 
@@ -12,6 +12,7 @@ function AdminLoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const [needsSetup, setNeedsSetup] = useState(false);
+  const [loadingSetupStatus, setLoadingSetupStatus] = useState(true);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [loginForm, setLoginForm] = useState({
@@ -27,7 +28,6 @@ function AdminLoginPage() {
   useEffect(() => {
     let active = true;
 
-    // Optional setup-status lookup should never block login UI or show an initial error.
     authApi
       .getSetupStatus()
       .then((response) => {
@@ -37,7 +37,18 @@ function AdminLoginPage() {
 
         setNeedsSetup(response.needsSetup);
       })
-      .catch(() => {});
+      .catch((setupError) => {
+        if (!active) {
+          return;
+        }
+
+        setError(extractApiError(setupError, 'تعذر التحقق من حالة الإعداد الأولي. حاول تحديث الصفحة.'));
+      })
+      .finally(() => {
+        if (active) {
+          setLoadingSetupStatus(false);
+        }
+      });
 
     return () => {
       active = false;
@@ -72,6 +83,11 @@ function AdminLoginPage() {
 
       goToAdmin();
     } catch (submitError) {
+      if (!needsSetup && submitError.response?.status === 409) {
+        setNeedsSetup(true);
+        setLoginForm({ username: '', password: '' });
+      }
+
       setError(submitError.message);
     } finally {
       setSubmitting(false);
@@ -124,7 +140,7 @@ function AdminLoginPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+              <form onSubmit={handleSubmit} autoComplete="off" className="mt-8 space-y-5">
                 {needsSetup ? (
                   <>
                     <label className="block">
@@ -132,6 +148,7 @@ function AdminLoginPage() {
                       <input
                         type="text"
                         value={setupForm.username}
+                        autoComplete="off"
                         onChange={(event) => setSetupForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
                         placeholder="اختر اسم مستخدم"
@@ -144,6 +161,7 @@ function AdminLoginPage() {
                         <input
                           type="password"
                           value={setupForm.password}
+                          autoComplete="new-password"
                           onChange={(event) =>
                             setSetupForm((current) => ({ ...current, password: event.target.value }))
                           }
@@ -156,6 +174,7 @@ function AdminLoginPage() {
                         <input
                           type="password"
                           value={setupForm.confirmPassword}
+                          autoComplete="new-password"
                           onChange={(event) =>
                             setSetupForm((current) => ({ ...current, confirmPassword: event.target.value }))
                           }
@@ -173,6 +192,7 @@ function AdminLoginPage() {
                       <input
                         type="text"
                         value={loginForm.username}
+                        autoComplete="off"
                         onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
                         placeholder="أدخل اسم المستخدم"
@@ -186,6 +206,7 @@ function AdminLoginPage() {
                       <input
                         type="password"
                         value={loginForm.password}
+                        autoComplete="current-password"
                         onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
                         placeholder="أدخل كلمة المرور"
@@ -196,10 +217,12 @@ function AdminLoginPage() {
 
                 <button
                   type="submit"
-                  disabled={submitting}
+                  disabled={submitting || loadingSetupStatus}
                   className="w-full rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {submitting
+                  {loadingSetupStatus
+                    ? 'جارٍ التحقق من حالة الإعداد...'
+                    : submitting
                     ? needsSetup
                       ? 'جارٍ إنشاء الحساب...'
                       : 'جارٍ تسجيل الدخول...'

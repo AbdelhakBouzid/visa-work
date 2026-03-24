@@ -120,26 +120,23 @@ const ensureSeedArticles = async (author) => {
   return { categories, publishedArticles };
 };
 
-const isSetupCompleteForUser = (user) =>
+const hasStoredCredentials = (user) =>
   Boolean(
     user &&
-      user.role === 'admin' &&
       typeof user.username === 'string' &&
       user.username.trim() &&
       typeof user.password === 'string' &&
-      user.password.trim() &&
-      user.requiresSetup === false
+      user.password.trim()
   );
 
-const findSetupCandidate = async () => {
-  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 });
+const isSetupCompleteForUser = (user) =>
+  Boolean(user && user.role === 'admin' && user.requiresSetup === false && hasStoredCredentials(user));
 
-  if (firstAdmin) {
-    return firstAdmin;
-  }
-
-  return User.findOne().sort({ createdAt: 1 });
-};
+const findSetupCandidate = async () =>
+  User.findOne({
+    role: 'admin',
+    $or: [{ requiresSetup: true }, { username: null }, { password: null }]
+  }).sort({ createdAt: 1 });
 
 export const bootstrapInitialData = async () => {
   const categories = await upsertSeedCategories();
@@ -149,18 +146,22 @@ export const bootstrapInitialData = async () => {
 };
 
 export const getSetupStatus = async () => {
-  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 }).select(
-    'username role requiresSetup password'
-  );
-  const setupComplete = isSetupCompleteForUser(firstAdmin);
+  const admins = await User.find({ role: 'admin' }).sort({ createdAt: 1 }).select('username role requiresSetup password');
+  const setupCandidate = admins.find((admin) => admin.requiresSetup || !hasStoredCredentials(admin));
+  const setupComplete = admins.some((admin) => isSetupCompleteForUser(admin));
 
   return {
-    needsSetup: !setupComplete
+    needsSetup: Boolean(setupCandidate) || !setupComplete
   };
 };
 
 export const completeInitialAdminSetup = async ({ username, password }) => {
-  const existingCompletedAdmin = await User.findOne({ role: 'admin', requiresSetup: false });
+  const existingCompletedAdmin = await User.findOne({
+    role: 'admin',
+    requiresSetup: false,
+    username: { $type: 'string', $nin: [''] },
+    password: { $type: 'string', $nin: [''] }
+  });
   if (existingCompletedAdmin) {
     const error = new Error('تم إعداد حساب المدير مسبقاً.');
     error.statusCode = 409;
