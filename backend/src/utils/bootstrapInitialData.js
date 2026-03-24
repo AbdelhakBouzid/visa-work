@@ -141,9 +141,12 @@ export const bootstrapInitialData = async () => {
 export const getSetupStatus = async () => {
   const userCount = await User.countDocuments();
   const legacySetupUser = userCount ? await findLegacySetupUser() : null;
+  const normalizedEnvUsername = (process.env.ADMIN_USERNAME || '').trim().toLowerCase();
+  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 }).select('username');
 
   return {
-    needsSetup: userCount === 0 || Boolean(legacySetupUser)
+    needsSetup: userCount === 0 || Boolean(legacySetupUser),
+    preferredUsername: firstAdmin?.username || normalizedEnvUsername || null
   };
 };
 
