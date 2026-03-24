@@ -5,8 +5,8 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
-      trim: true
+      trim: true,
+      default: 'Admin'
     },
     username: {
       type: String,
@@ -17,8 +17,9 @@ const userSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
+      sparse: true,
       lowercase: true,
       trim: true
     },
@@ -31,6 +32,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ['admin'],
       default: 'admin'
+    },
+    requiresSetup: {
+      type: Boolean,
+      default: true
     }
   },
   { timestamps: true }

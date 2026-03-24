@@ -9,16 +9,10 @@ const backendRoot = path.resolve(__dirname, '../..');
 
 export const loadEnv = () => {
   const envPath = path.join(backendRoot, '.env');
-  const envExamplePath = path.join(backendRoot, '.env.example');
 
   if (fs.existsSync(envPath)) {
     dotenv.config({ path: envPath });
     return envPath;
-  }
-
-  if (fs.existsSync(envExamplePath)) {
-    dotenv.config({ path: envExamplePath });
-    return envExamplePath;
   }
 
   dotenv.config();

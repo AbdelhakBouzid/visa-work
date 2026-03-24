@@ -21,7 +21,7 @@
 
 ## التشغيل
 
-1. أنشئ ملف البيئة `backend/.env` عبر نسخ القيم من `backend/.env.example` (وإذا لم يوجد `backend/.env` سيستخدم الخادم `backend/.env.example` تلقائياً كقيمة احتياطية).
+1. أنشئ ملف البيئة `backend/.env` عبر نسخ القيم من `backend/.env.example`.
 2. ثبّت الاعتماديات:
 
 ```bash
@@ -45,14 +45,11 @@ npm run dev
 - الواجهة: `http://localhost:5173`
 - الـ API: `http://localhost:5000/api`
 
-## حساب المدير الافتراضي
+## إعداد المدير لأول مرة
 
-- اسم المستخدم: `Abdelhak26`
-- كلمة المرور: `ABDObzd@@2001`
-
-يمكن تغييرهما من `backend/.env` قبل تنفيذ `npm run seed`.
-
-> عند تسجيل الدخول بهذه البيانات، يقوم الخادم بمزامنة/إنشاء حساب المدير تلقائياً لضمان نجاح الدخول دائماً.
+- عند أول زيارة إلى `/admin/login` ستظهر شاشة إعداد أولي إذا لم يكتمل إعداد المدير.
+- يتم إدخال `username` + `password` + `confirm password`.
+- بعد الحفظ، يصبح تسجيل الدخول دائماً عبر `username + password` فقط.
 
 ## أوامر مهمة
 
@@ -77,8 +74,6 @@ npm run start
 
 - `MONGO_URI`
 - `JWT_SECRET`
-- `ADMIN_EMAIL`
-- `ADMIN_PASSWORD`
 - `CLIENT_URL`
 
 ### متغير مهم لرفع الصور على Vercel

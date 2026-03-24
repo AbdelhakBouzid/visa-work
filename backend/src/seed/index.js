@@ -6,7 +6,6 @@ import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from './data.js';
 import { loadEnv } from '../utils/loadEnv.js';
-import { getAdminCredentials } from '../utils/adminCredentials.js';
 
 loadEnv();
 
@@ -15,13 +14,12 @@ const runSeed = async () => {
 
   await Promise.all([Article.deleteMany({}), Category.deleteMany({}), Settings.deleteMany({}), User.deleteMany({})]);
 
-  const { username: adminUsername, email: adminEmail, password: adminPassword } = getAdminCredentials();
   const admin = await User.create({
-    name: 'مدير الموقع',
-    username: adminUsername,
-    email: adminEmail,
-    password: adminPassword,
-    role: 'admin'
+    name: 'Admin',
+    username: 'setup-required',
+    password: 'temporary-password-should-be-replaced',
+    role: 'admin',
+    requiresSetup: true
   });
 
   const categories = await Category.insertMany(seedCategories);
@@ -77,9 +75,8 @@ const runSeed = async () => {
   });
 
   console.log('Seed completed successfully');
-  console.log(`Admin username: ${admin.username}`);
-  console.log(`Admin email: ${admin.email}`);
-  console.log(`Admin password: ${adminPassword}`);
+  console.log(`Admin placeholder username: ${admin.username}`);
+  console.log('Admin setup status: requires first-time setup from /admin/login');
   console.log(`Settings created: ${settings.siteName}`);
 
   await mongoose.connection.close();

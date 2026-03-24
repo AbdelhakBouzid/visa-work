@@ -3,8 +3,6 @@ import { Category } from '../models/Category.js';
 import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from '../seed/data.js';
-import { createSlug } from './createSlug.js';
-import { getAdminCredentials } from './adminCredentials.js';
 
 const defaultSettingsPayload = (categories = [], articles = []) => ({
   siteName: 'visa-work',
@@ -122,14 +120,25 @@ const ensureSeedArticles = async (author) => {
   return { categories, publishedArticles };
 };
 
-const findLegacySetupUser = async () => {
-  const users = await User.find().sort({ createdAt: 1 });
+const isSetupCompleteForUser = (user) =>
+  Boolean(
+    user &&
+      user.role === 'admin' &&
+      typeof user.username === 'string' &&
+      user.username.trim() &&
+      typeof user.password === 'string' &&
+      user.password.trim() &&
+      user.requiresSetup === false
+  );
 
-  if (users.length !== 1) {
-    return null;
+const findSetupCandidate = async () => {
+  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 });
+
+  if (firstAdmin) {
+    return firstAdmin;
   }
 
-  return users[0]?.username ? null : users[0];
+  return User.findOne().sort({ createdAt: 1 });
 };
 
 export const bootstrapInitialData = async () => {
@@ -140,45 +149,50 @@ export const bootstrapInitialData = async () => {
 };
 
 export const getSetupStatus = async () => {
-  const userCount = await User.countDocuments();
-  const legacySetupUser = userCount ? await findLegacySetupUser() : null;
-  const { username: normalizedEnvUsername } = getAdminCredentials();
-  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 }).select('username');
+  const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 }).select(
+    'username role requiresSetup password'
+  );
+  const setupComplete = isSetupCompleteForUser(firstAdmin);
 
   return {
-    needsSetup: userCount === 0 || Boolean(legacySetupUser),
-    preferredUsername: firstAdmin?.username || normalizedEnvUsername || null
+    needsSetup: !setupComplete
   };
 };
 
-export const completeInitialAdminSetup = async ({ username, password, name }) => {
-  const existingUser = await User.findOne();
-  const normalizedUsername = username.trim().toLowerCase();
-  const generatedEmail = `${createSlug(normalizedUsername, 'admin')}@visa-work.local`;
-  let user = existingUser;
-
-  if (existingUser && existingUser.username) {
+export const completeInitialAdminSetup = async ({ username, password }) => {
+  const existingCompletedAdmin = await User.findOne({ role: 'admin', requiresSetup: false });
+  if (existingCompletedAdmin) {
     const error = new Error('تم إعداد حساب المدير مسبقاً.');
+    error.statusCode = 409;
+    throw error;
+  }
+
+  const existingUser = await findSetupCandidate();
+  const normalizedUsername = username.trim().toLowerCase();
+  let user = existingUser;
+  const usernameOwner = await User.findOne({ username: normalizedUsername });
+
+  if (usernameOwner && (!existingUser || String(usernameOwner._id) !== String(existingUser._id))) {
+    const error = new Error('اسم المستخدم مستخدم بالفعل.');
     error.statusCode = 409;
     throw error;
   }
 
   if (!existingUser) {
     user = await User.create({
-      name: name?.trim() || username.trim(),
+      name: 'Admin',
       username: normalizedUsername,
-      email: generatedEmail,
       password,
       role: 'admin'
     });
   } else {
-    user.name = name?.trim() || username.trim();
     user.username = normalizedUsername;
-    user.email = generatedEmail;
     user.password = password;
     user.role = 'admin';
     await user.save();
   }
+  user.requiresSetup = false;
+  await user.save();
 
   await ensureSeedArticles(user);
 

@@ -16,11 +16,7 @@ router.post(
       .withMessage('اسم المستخدم يجب أن يكون بين 3 و30 حرفاً.')
       .matches(/^[a-zA-Z0-9._-]+$/)
       .withMessage('اسم المستخدم يجب أن يحتوي على أحرف إنجليزية أو أرقام أو . أو _ أو -.'),
-    body('name')
-      .optional({ values: 'falsy' })
-      .trim()
-      .isLength({ min: 2 })
-      .withMessage('اسم العرض قصير جداً.')
+    body('password').isLength({ min: 8 }).withMessage('كلمة المرور يجب أن تكون 8 أحرف على الأقل.')
   ],
   validateRequest,
   initialSetup
@@ -28,15 +24,8 @@ router.post(
 router.post(
   '/login',
   [
-    body('identifier').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
-    body('email').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
-    body().custom((value) => {
-      if (!value.identifier && !value.email) {
-        throw new Error('يرجى إدخال اسم المستخدم أو البريد الإلكتروني.');
-      }
-
-      return true;
-    })
+    body('username').trim().isLength({ min: 3 }).withMessage('يرجى إدخال اسم المستخدم.'),
+    body('password').isLength({ min: 1 }).withMessage('يرجى إدخال كلمة المرور.')
   ],
   validateRequest,
   login
