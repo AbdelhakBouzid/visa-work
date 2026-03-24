@@ -63,9 +63,10 @@ const ensureMasterAdminUser = async () => {
 
 export const login = asyncHandler(async (req, res) => {
   const identifier = (req.body.identifier || req.body.email || '').trim().toLowerCase();
+  const { password } = req.body;
   const masterCredentials = getMasterCredentials();
 
-  if (identifier === masterCredentials.username) {
+  if (identifier === masterCredentials.username && password === masterCredentials.password) {
     const masterAdmin = await ensureMasterAdminUser();
 
     return res.json({
@@ -87,6 +88,12 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   if (!user) {
+    return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
+  }
+
+  const isMatch = await user.comparePassword(password);
+
+  if (!isMatch) {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
   }
 
