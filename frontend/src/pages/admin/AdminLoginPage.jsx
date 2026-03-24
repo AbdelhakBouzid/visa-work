@@ -1,12 +1,11 @@
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import LoadingScreen from '../../components/common/LoadingScreen';
 import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
-import { authApi, extractApiError } from '../../services/api';
+import { authApi } from '../../services/api';
 
-const DEFAULT_ADMIN_USERNAME = 'abdelhak26';
+const DEFAULT_ADMIN_USERNAME = (import.meta.env.VITE_ADMIN_USERNAME || 'abdelhak26').trim().toLowerCase();
 const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
 
 const normalizeUsername = (value) => value.trim().toLowerCase();
@@ -15,7 +14,6 @@ function AdminLoginPage() {
   const { login, completeInitialSetup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [setupLoading, setSetupLoading] = useState(true);
   const [needsSetup, setNeedsSetup] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -32,6 +30,7 @@ function AdminLoginPage() {
   useEffect(() => {
     let active = true;
 
+    // Optional setup-status lookup should never block login UI or show an initial error.
     authApi
       .getSetupStatus()
       .then((response) => {
@@ -47,18 +46,7 @@ function AdminLoginPage() {
           username: suggestedUsername
         }));
       })
-      .catch((requestError) => {
-        if (!active) {
-          return;
-        }
-
-        setError(extractApiError(requestError, 'تعذر التحقق من حالة بوابة الإدارة.'));
-      })
-      .finally(() => {
-        if (active) {
-          setSetupLoading(false);
-        }
-      });
+      .catch(() => {});
 
     return () => {
       active = false;
@@ -98,10 +86,6 @@ function AdminLoginPage() {
       setSubmitting(false);
     }
   };
-
-  if (setupLoading) {
-    return <LoadingScreen fullScreen label="جارٍ تجهيز بوابة الإدارة..." />;
-  }
 
   return (
     <>

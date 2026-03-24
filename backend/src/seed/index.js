@@ -5,8 +5,8 @@ import { Category } from '../models/Category.js';
 import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from './data.js';
-import { createSlug } from '../utils/createSlug.js';
 import { loadEnv } from '../utils/loadEnv.js';
+import { getAdminCredentials } from '../utils/adminCredentials.js';
 
 loadEnv();
 
@@ -15,12 +15,12 @@ const runSeed = async () => {
 
   await Promise.all([Article.deleteMany({}), Category.deleteMany({}), Settings.deleteMany({}), User.deleteMany({})]);
 
-  const adminEmail = process.env.ADMIN_EMAIL || 'abdelhak26@visa-work.com';
+  const { username: adminUsername, email: adminEmail, password: adminPassword } = getAdminCredentials();
   const admin = await User.create({
     name: 'مدير الموقع',
-    username: (process.env.ADMIN_USERNAME || createSlug(adminEmail.split('@')[0], 'admin')).toLowerCase(),
+    username: adminUsername,
     email: adminEmail,
-    password: process.env.ADMIN_PASSWORD || 'ABDObzd@@2001',
+    password: adminPassword,
     role: 'admin'
   });
 
@@ -79,7 +79,7 @@ const runSeed = async () => {
   console.log('Seed completed successfully');
   console.log(`Admin username: ${admin.username}`);
   console.log(`Admin email: ${admin.email}`);
-  console.log(`Admin password: ${process.env.ADMIN_PASSWORD || 'ABDObzd@@2001'}`);
+  console.log(`Admin password: ${adminPassword}`);
   console.log(`Settings created: ${settings.siteName}`);
 
   await mongoose.connection.close();
