@@ -6,8 +6,10 @@ import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
 import { authApi, extractApiError } from '../../services/api';
 
-const DEFAULT_ADMIN_USERNAME = 'Abdelhak26';
+const DEFAULT_ADMIN_USERNAME = 'abdelhak26';
 const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
+
+const normalizeUsername = (value) => value.trim().toLowerCase();
 
 function AdminLoginPage() {
   const { login, completeInitialSetup } = useAuth();
@@ -37,7 +39,13 @@ function AdminLoginPage() {
           return;
         }
 
+        const suggestedUsername = normalizeUsername(response.preferredUsername || DEFAULT_ADMIN_USERNAME);
         setNeedsSetup(response.needsSetup);
+        setLoginForm({ username: suggestedUsername });
+        setSetupForm((current) => ({
+          ...current,
+          username: suggestedUsername
+        }));
       })
       .catch((requestError) => {
         if (!active) {
@@ -74,12 +82,12 @@ function AdminLoginPage() {
 
         await completeInitialSetup({
           name: setupForm.name.trim(),
-          username: setupForm.username.trim(),
+          username: normalizeUsername(setupForm.username),
           password: setupForm.password
         });
       } else {
         await login({
-          identifier: loginForm.username.trim()
+          identifier: normalizeUsername(loginForm.username)
         });
       }
 
@@ -132,7 +140,7 @@ function AdminLoginPage() {
                   <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
                     {needsSetup
                       ? 'اختر اسم المستخدم وكلمة المرور التي تريد الاعتماد عليهما لاحقاً. هذه الخطوة تظهر مرة واحدة فقط.'
-                      : 'دخول مباشر باسم المستخدم فقط بدون كلمة مرور.'}
+                      : 'تسجيل الدخول باسم المستخدم فقط. إذا أدخلت كلمة مرور فسيتم التحقق منها اختيارياً.'}
                   </p>
                 </div>
 
@@ -233,7 +241,7 @@ function AdminLoginPage() {
               <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs leading-6 text-slate-500">
                 {needsSetup
                   ? 'بعد الحفظ سيتم حفظ اسم المستخدم وكلمة المرور في قاعدة البيانات، وبعدها ستستخدمهما لكل دخول لاحق.'
-                  : 'الدخول يتم مباشرة باسم المستخدم فقط دون الحاجة إلى كلمة مرور.'}
+                  : 'يمكنك تسجيل الدخول باسم المستخدم فقط، وكلمة المرور اختيارية.'}
               </div>
             </div>
           </div>

@@ -25,6 +25,30 @@ const getMasterCredentials = () => ({
   password: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD
 });
 
+const findAdminByIdentifier = async (identifier) => {
+  if (!identifier) {
+    return null;
+  }
+
+  let user = await User.findOne({
+    $or: [{ username: identifier }, { email: identifier }]
+  });
+
+  if (!user && identifier.includes('@')) {
+    const emailLocalPart = identifier.split('@')[0];
+
+    if (emailLocalPart) {
+      user = await User.findOne({ username: emailLocalPart });
+    }
+  }
+
+  if (user?.role !== 'admin') {
+    return null;
+  }
+
+  return user;
+};
+
 const ensureMasterAdminUser = async () => {
   const { username, password } = getMasterCredentials();
   const generatedEmail = `${createSlug(username, 'admin')}@visa-work.local`;
@@ -64,8 +88,12 @@ const ensureMasterAdminUser = async () => {
 export const login = asyncHandler(async (req, res) => {
   const identifier = (req.body.identifier || req.body.email || '').trim().toLowerCase();
   const { password } = req.body;
-  const masterCredentials = getMasterCredentials();
   const normalizedPassword = typeof password === 'string' ? password : '';
+  const masterCredentials = getMasterCredentials();
+
+  if (!identifier) {
+    return res.status(400).json({ message: 'يرجى إدخال اسم المستخدم أو البريد الإلكتروني.' });
+  }
 
   if (
     identifier === masterCredentials.username &&
@@ -79,31 +107,29 @@ export const login = asyncHandler(async (req, res) => {
     });
   }
 
-  let user = await User.findOne({
-    $or: [{ username: identifier }, { email: identifier }]
-  });
+  const admin = await findAdminByIdentifier(identifier);
 
-  if (!user && identifier.includes('@')) {
-    const emailLocalPart = identifier.split('@')[0];
-
-    if (emailLocalPart) {
-      user = await User.findOne({ username: emailLocalPart });
-    }
-  }
-
-  if (!user) {
+  if (!admin) {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
   }
 
-  const isMatch = await user.comparePassword(password);
+  // This admin portal supports username-only authentication by design.
+  if (!normalizedPassword) {
+    return res.json({
+      token: createToken(admin._id),
+      user: sanitizeUser(admin)
+    });
+  }
+
+  const isMatch = await admin.comparePassword(normalizedPassword);
 
   if (!isMatch) {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
   }
 
   return res.json({
-    token: createToken(user._id),
-    user: sanitizeUser(user)
+    token: createToken(admin._id),
+    user: sanitizeUser(admin)
   });
 });
 
