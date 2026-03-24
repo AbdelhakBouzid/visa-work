@@ -3,12 +3,10 @@ import { User } from '../models/User.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { completeInitialAdminSetup, getSetupStatus } from '../utils/bootstrapInitialData.js';
 import { createSlug } from '../utils/createSlug.js';
-
-const DEFAULT_ADMIN_USERNAME = 'abdelhak26';
-const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
+import { getAdminCredentials } from '../utils/adminCredentials.js';
 
 const createToken = (userId) =>
-  jwt.sign({ userId }, process.env.JWT_SECRET, {
+  jwt.sign({ userId }, process.env.JWT_SECRET || 'visa-work-jwt-fallback-secret', {
     expiresIn: '7d'
   });
 
@@ -18,11 +16,6 @@ const sanitizeUser = (user) => ({
   username: user.username,
   email: user.email,
   role: user.role
-});
-
-const getMasterCredentials = () => ({
-  username: (process.env.ADMIN_USERNAME || DEFAULT_ADMIN_USERNAME).trim().toLowerCase(),
-  password: process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD
 });
 
 const findAdminByIdentifier = async (identifier) => {
@@ -50,8 +43,8 @@ const findAdminByIdentifier = async (identifier) => {
 };
 
 const ensureMasterAdminUser = async () => {
-  const { username, password } = getMasterCredentials();
-  const generatedEmail = `${createSlug(username, 'admin')}@visa-work.local`;
+  const { username, password, email } = getAdminCredentials();
+  const generatedEmail = email || `${createSlug(username, 'admin')}@visa-work.local`;
 
   let admin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 });
 
@@ -89,7 +82,7 @@ export const login = asyncHandler(async (req, res) => {
   const identifier = (req.body.identifier || req.body.email || '').trim().toLowerCase();
   const { password } = req.body;
   const normalizedPassword = typeof password === 'string' ? password : '';
-  const masterCredentials = getMasterCredentials();
+  const masterCredentials = getAdminCredentials();
 
   if (!identifier) {
     return res.status(400).json({ message: 'يرجى إدخال اسم المستخدم أو البريد الإلكتروني.' });

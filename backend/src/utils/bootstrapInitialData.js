@@ -4,6 +4,7 @@ import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from '../seed/data.js';
 import { createSlug } from './createSlug.js';
+import { getAdminCredentials } from './adminCredentials.js';
 
 const defaultSettingsPayload = (categories = [], articles = []) => ({
   siteName: 'visa-work',
@@ -141,7 +142,7 @@ export const bootstrapInitialData = async () => {
 export const getSetupStatus = async () => {
   const userCount = await User.countDocuments();
   const legacySetupUser = userCount ? await findLegacySetupUser() : null;
-  const normalizedEnvUsername = (process.env.ADMIN_USERNAME || '').trim().toLowerCase();
+  const { username: normalizedEnvUsername } = getAdminCredentials();
   const firstAdmin = await User.findOne({ role: 'admin' }).sort({ createdAt: 1 }).select('username');
 
   return {
