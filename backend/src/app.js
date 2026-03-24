@@ -12,6 +12,7 @@ import settingsRoutes from './routes/settingsRoutes.js';
 import publicRoutes from './routes/publicRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
+import compatRoutes from './routes/compatRoutes.js';
 import { errorHandler, notFound } from './middleware/errorHandler.js';
 import { bootstrapInitialData } from './utils/bootstrapInitialData.js';
 import { loadEnv } from './utils/loadEnv.js';
@@ -109,6 +110,10 @@ for (const mountPath of apiMountPaths) {
   app.use(routePath('/public'), publicRoutes);
   app.use(routePath('/dashboard'), dashboardRoutes);
   app.use(routePath('/uploads'), uploadRoutes);
+
+  if (mountPath === '/api') {
+    app.use(mountPath, compatRoutes);
+  }
 }
 
 app.use(notFound);
