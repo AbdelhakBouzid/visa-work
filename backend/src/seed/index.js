@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/db.js';
 import { Article } from '../models/Article.js';
@@ -7,8 +6,9 @@ import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from './data.js';
 import { createSlug } from '../utils/createSlug.js';
+import { loadEnv } from '../utils/loadEnv.js';
 
-dotenv.config();
+loadEnv();
 
 const runSeed = async () => {
   await connectDB();

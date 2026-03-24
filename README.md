@@ -21,7 +21,7 @@
 
 ## التشغيل
 
-1. أنشئ ملف البيئة `backend/.env` عبر نسخ القيم من `backend/.env.example`.
+1. أنشئ ملف البيئة `backend/.env` عبر نسخ القيم من `backend/.env.example` (وإذا لم يوجد `backend/.env` سيستخدم الخادم `backend/.env.example` تلقائياً كقيمة احتياطية).
 2. ثبّت الاعتماديات:
 
 ```bash
