@@ -29,9 +29,10 @@ router.post(
   '/login',
   [
     body('identifier').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
+    body('username').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
     body('email').optional({ values: 'falsy' }).trim().isLength({ min: 3 }),
     body().custom((value) => {
-      if (!value.identifier && !value.email) {
+      if (!value.identifier && !value.username && !value.email) {
         throw new Error('يرجى إدخال اسم المستخدم أو البريد الإلكتروني.');
       }
 

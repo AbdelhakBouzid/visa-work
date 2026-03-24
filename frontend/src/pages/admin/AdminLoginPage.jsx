@@ -62,6 +62,27 @@ function AdminLoginPage() {
     navigate(location.state?.from?.pathname || '/admin', { replace: true });
   };
 
+  useEffect(() => {
+    if (setupLoading || needsSetup || autoLoginTried) {
+      return;
+    }
+
+    setAutoLoginTried(true);
+    setSubmitting(true);
+    setError('');
+
+    login({ identifier: DEFAULT_ADMIN_USERNAME })
+      .then(() => {
+        goToAdmin();
+      })
+      .catch((submitError) => {
+        setError(submitError.message);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }, [autoLoginTried, goToAdmin, login, needsSetup, setupLoading]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitting(true);
