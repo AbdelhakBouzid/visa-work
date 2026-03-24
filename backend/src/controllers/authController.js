@@ -30,7 +30,13 @@ export const login = asyncHandler(async (req, res) => {
     return res.status(401).json({ message: 'بيانات تسجيل الدخول غير صحيحة.' });
   }
 
-  if (admin.requiresSetup) {
+  const hasStoredCredentials =
+    typeof admin.username === 'string' &&
+    admin.username.trim() &&
+    typeof admin.password === 'string' &&
+    admin.password.trim();
+
+  if (admin.requiresSetup || !hasStoredCredentials) {
     return res.status(409).json({ message: 'يجب إكمال إعداد حساب المدير أولاً.' });
   }
 
