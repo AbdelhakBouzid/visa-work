@@ -191,13 +191,15 @@ function AdminLoginPage() {
                 ) : (
                   <>
                     <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">اسم المستخدم</span>
+                      <span className="mb-2 block text-sm font-semibold text-slate-700">
+                        اسم المستخدم أو البريد الإلكتروني
+                      </span>
                       <input
                         type="text"
                         value={loginForm.username}
                         onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="اكتب اسم المستخدم"
+                        placeholder="مثال: admin أو admin@visa-work.com"
                       />
                     </label>
 
