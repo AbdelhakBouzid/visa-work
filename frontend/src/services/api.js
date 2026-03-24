@@ -49,6 +49,34 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalConfig = error.config;
+    const status = error.response?.status;
+    const currentBaseUrl = String(originalConfig?.baseURL ?? api.defaults.baseURL ?? '');
+    const requestUrl = String(originalConfig?.url ?? '');
+    const alreadyUsingApiBase = currentBaseUrl === '/api' || /\/api\/?$/.test(currentBaseUrl);
+
+    if (
+      typeof window !== 'undefined' &&
+      status === 404 &&
+      originalConfig &&
+      !originalConfig._retryApiBaseFallback &&
+      !alreadyUsingApiBase &&
+      requestUrl.startsWith('/')
+    ) {
+      return api.request({
+        ...originalConfig,
+        baseURL: '/api',
+        _retryApiBaseFallback: true
+      });
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export const extractApiError = (error, fallback = 'حدث خطأ غير متوقع.') => {
   if (error.response?.data?.errors?.length) {
     return error.response.data.errors.map((item) => item.message).join(' ');
