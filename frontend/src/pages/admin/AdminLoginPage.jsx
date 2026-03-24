@@ -8,6 +8,7 @@ import { authApi, extractApiError } from '../../services/api';
 
 const DEFAULT_ADMIN_USERNAME = 'Abdelhak26';
 const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
+
 function AdminLoginPage() {
   const { login, completeInitialSetup } = useAuth();
   const navigate = useNavigate();
@@ -16,9 +17,9 @@ function AdminLoginPage() {
   const [needsSetup, setNeedsSetup] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [autoLoginTried, setAutoLoginTried] = useState(false);
   const [loginForm, setLoginForm] = useState({
-    username: DEFAULT_ADMIN_USERNAME
+    username: DEFAULT_ADMIN_USERNAME,
+    password: DEFAULT_ADMIN_PASSWORD
   });
   const [setupForm, setSetupForm] = useState({
     name: 'Abdelhak',
@@ -153,7 +154,7 @@ function AdminLoginPage() {
                   <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
                     {needsSetup
                       ? 'اختر اسم المستخدم وكلمة المرور التي تريد الاعتماد عليهما لاحقاً. هذه الخطوة تظهر مرة واحدة فقط.'
-                      : 'محاولة دخول مباشرة تلقائياً. إذا فشلت، أدخل اسم المستخدم واضغط دخول.'}
+                      : 'دخول مباشر باسم المستخدم فقط بدون كلمة مرور.'}
                   </p>
                 </div>
 
@@ -228,6 +229,16 @@ function AdminLoginPage() {
                       />
                     </label>
 
+                    <label className="block">
+                      <span className="mb-2 block text-sm font-semibold text-slate-700">كلمة المرور</span>
+                      <input
+                        type="password"
+                        value={loginForm.password}
+                        onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_PASSWORD}`}
+                      />
+                    </label>
                   </>
                 )}
 
