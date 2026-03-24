@@ -80,8 +80,7 @@ function AdminLoginPage() {
         });
       } else {
         await login({
-          identifier: loginForm.username,
-          password: loginForm.password
+          identifier: loginForm.username
         });
       }
 
@@ -134,7 +133,7 @@ function AdminLoginPage() {
                   <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
                     {needsSetup
                       ? 'اختر اسم المستخدم وكلمة المرور التي تريد الاعتماد عليهما لاحقاً. هذه الخطوة تظهر مرة واحدة فقط.'
-                      : 'نفس أسلوب الدخول المباشر: اسم مستخدم وكلمة مرور للوصول السريع إلى لوحة الإدارة.'}
+                      : 'دخول مباشر باسم المستخدم فقط بدون كلمة مرور.'}
                   </p>
                 </div>
 
@@ -198,7 +197,7 @@ function AdminLoginPage() {
                   <>
                     <label className="block">
                       <span className="mb-2 block text-sm font-semibold text-slate-700">
-                        اسم المستخدم أو البريد الإلكتروني
+                        اسم المستخدم
                       </span>
                       <input
                         type="text"
@@ -246,7 +245,7 @@ function AdminLoginPage() {
               <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs leading-6 text-slate-500">
                 {needsSetup
                   ? 'بعد الحفظ سيتم حفظ اسم المستخدم وكلمة المرور في قاعدة البيانات، وبعدها ستستخدمهما لكل دخول لاحق.'
-                  : 'إذا كنت تتوقع ظهور شاشة الإعداد الأولي فهذا يعني غالباً أن حساب المدير موجود بالفعل في قاعدة البيانات.'}
+                  : 'الدخول يتم مباشرة باسم المستخدم فقط دون الحاجة إلى كلمة مرور.'}
               </div>
             </div>
           </div>
