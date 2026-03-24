@@ -135,7 +135,7 @@ const isSetupCompleteForUser = (user) =>
 const findSetupCandidate = async () =>
   User.findOne({
     role: 'admin',
-    $or: [{ requiresSetup: true }, { username: null }, { password: null }]
+    $or: [{ requiresSetup: true }, { username: null }, { username: '' }, { password: null }, { password: '' }]
   }).sort({ createdAt: 1 });
 
 export const bootstrapInitialData = async () => {
@@ -146,8 +146,11 @@ export const bootstrapInitialData = async () => {
 };
 
 export const getSetupStatus = async () => {
-  const admins = await User.find({ role: 'admin' }).sort({ createdAt: 1 }).select('username role requiresSetup password');
-  const setupCandidate = admins.find((admin) => admin.requiresSetup || !hasStoredCredentials(admin));
+  const admins = await User.find({ role: 'admin' })
+    .sort({ createdAt: 1 })
+    .select('username role requiresSetup password')
+    .lean();
+  const setupCandidate = admins.find((admin) => admin.requiresSetup !== false || !hasStoredCredentials(admin));
   const setupComplete = admins.some((admin) => isSetupCompleteForUser(admin));
 
   return {

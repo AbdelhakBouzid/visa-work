@@ -61,8 +61,16 @@ export const me = asyncHandler(async (req, res) => {
 });
 
 export const setupStatus = asyncHandler(async (req, res) => {
-  const status = await getSetupStatus();
-  res.json(status);
+  try {
+    const status = await getSetupStatus();
+    res.json(status);
+  } catch (error) {
+    console.error('Failed to resolve admin setup status:', error);
+    res.status(200).json({
+      needsSetup: true,
+      statusCheckFailed: true
+    });
+  }
 });
 
 export const initialSetup = asyncHandler(async (req, res) => {
