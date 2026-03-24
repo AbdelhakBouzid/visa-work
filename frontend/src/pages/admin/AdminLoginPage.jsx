@@ -1,65 +1,21 @@
 import { ArrowRight, ShieldCheck } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
-import { authApi, extractApiError } from '../../services/api';
 
 const normalizeUsername = (value) => value.trim().toLowerCase();
 
 function AdminLoginPage() {
-  const { login, completeInitialSetup } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [needsSetup, setNeedsSetup] = useState(false);
-  const [loadingSetupStatus, setLoadingSetupStatus] = useState(true);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [loginForm, setLoginForm] = useState({
+  const [form, setForm] = useState({
     username: '',
     password: ''
   });
-  const [setupForm, setSetupForm] = useState({
-    username: '',
-    password: '',
-    confirmPassword: ''
-  });
-
-  useEffect(() => {
-    let active = true;
-
-    authApi
-      .getSetupStatus()
-      .then((response) => {
-        if (!active) {
-          return;
-        }
-
-        setNeedsSetup(response.needsSetup);
-      })
-      .catch((setupError) => {
-        if (!active) {
-          return;
-        }
-
-        setNeedsSetup(true);
-        setError(
-          extractApiError(
-            setupError,
-            'تعذر التحقق من حالة الإعداد الأولي، تم عرض نموذج الإعداد كخيار آمن. يمكنك المتابعة.'
-          )
-        );
-      })
-      .finally(() => {
-        if (active) {
-          setLoadingSetupStatus(false);
-        }
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
 
   const goToAdmin = () => {
     navigate(location.state?.from?.pathname || '/admin', { replace: true });
@@ -71,29 +27,12 @@ function AdminLoginPage() {
     setError('');
 
     try {
-      if (needsSetup) {
-        if (setupForm.password !== setupForm.confirmPassword) {
-          throw new Error('تأكيد كلمة المرور غير مطابق.');
-        }
-
-        await completeInitialSetup({
-          username: normalizeUsername(setupForm.username),
-          password: setupForm.password
-        });
-      } else {
-        await login({
-          username: normalizeUsername(loginForm.username),
-          password: loginForm.password
-        });
-      }
-
+      await login({
+        username: normalizeUsername(form.username),
+        password: form.password
+      });
       goToAdmin();
     } catch (submitError) {
-      if (!needsSetup && submitError.response?.status === 409) {
-        setNeedsSetup(true);
-        setLoginForm({ username: '', password: '' });
-      }
-
       setError(submitError.message);
     } finally {
       setSubmitting(false);
@@ -103,8 +42,8 @@ function AdminLoginPage() {
   return (
     <>
       <Seo
-        title={needsSetup ? 'إعداد المدير الأول' : 'تسجيل دخول الإدارة'}
-        description="بوابة إدارة visa-work لتسجيل الدخول أو إعداد حساب المدير الأول."
+        title="تسجيل دخول الإدارة"
+        description="بوابة إدارة visa-work لتسجيل الدخول إلى لوحة التحكم."
       />
 
       <section className="min-h-screen bg-[radial-gradient(circle_at_top,#f7efe1,transparent_34%),linear-gradient(180deg,#f8fafc_0%,#eef2f7_100%)] px-4 py-8 sm:px-6">
@@ -129,15 +68,14 @@ function AdminLoginPage() {
                 <div>
                   <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-3 py-1 text-xs font-bold text-brand-700">
                     <ShieldCheck className="h-4 w-4" />
-                    <span>{needsSetup ? 'الإعداد الأولي' : 'دخول الإدارة'}</span>
+                    <span>دخول الإدارة</span>
                   </span>
                   <h1 className="mt-4 text-3xl font-black text-slate-950 sm:text-4xl">
-                    {needsSetup ? 'أنشئ حساب المدير الأول' : 'سجل الدخول إلى لوحة التحكم'}
+                    سجل الدخول إلى لوحة التحكم
                   </h1>
                   <p className="mt-3 max-w-lg text-sm leading-7 text-slate-500">
-                    {needsSetup
-                      ? 'اختر اسم المستخدم وكلمة المرور التي تريد الاعتماد عليهما لاحقاً. هذه الخطوة تظهر مرة واحدة فقط.'
-                      : 'أدخل اسم المستخدم وكلمة المرور لتسجيل الدخول إلى لوحة التحكم.'}
+                    هذا النظام يعتمد على بيانات الأدمن المعرفة مسبقاً في الخادم عبر ADMIN_USER و ADMIN_PASS،
+                    وبعد نجاح الدخول يتم إنشاء Session Cookie آمنة تلقائياً.
                   </p>
                 </div>
 
@@ -147,94 +85,36 @@ function AdminLoginPage() {
               </div>
 
               <form onSubmit={handleSubmit} autoComplete="off" className="mt-8 space-y-5">
-                {needsSetup ? (
-                  <>
-                    <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">اسم المستخدم</span>
-                      <input
-                        type="text"
-                        value={setupForm.username}
-                        autoComplete="off"
-                        onChange={(event) => setSetupForm((current) => ({ ...current, username: event.target.value }))}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="اختر اسم مستخدم"
-                      />
-                    </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-slate-700">اسم المستخدم</span>
+                  <input
+                    type="text"
+                    value={form.username}
+                    autoComplete="username"
+                    onChange={(event) => setForm((current) => ({ ...current, username: event.target.value }))}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
+                    placeholder="أدخل اسم المستخدم"
+                  />
+                </label>
 
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <label className="block">
-                        <span className="mb-2 block text-sm font-semibold text-slate-700">كلمة المرور</span>
-                        <input
-                          type="password"
-                          value={setupForm.password}
-                          autoComplete="new-password"
-                          onChange={(event) =>
-                            setSetupForm((current) => ({ ...current, password: event.target.value }))
-                          }
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        />
-                      </label>
-
-                      <label className="block">
-                        <span className="mb-2 block text-sm font-semibold text-slate-700">تأكيد كلمة المرور</span>
-                        <input
-                          type="password"
-                          value={setupForm.confirmPassword}
-                          autoComplete="new-password"
-                          onChange={(event) =>
-                            setSetupForm((current) => ({ ...current, confirmPassword: event.target.value }))
-                          }
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        />
-                      </label>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">
-                        اسم المستخدم
-                      </span>
-                      <input
-                        type="text"
-                        value={loginForm.username}
-                        autoComplete="off"
-                        onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="أدخل اسم المستخدم"
-                      />
-                    </label>
-
-                    <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">
-                        كلمة المرور
-                      </span>
-                      <input
-                        type="password"
-                        value={loginForm.password}
-                        autoComplete="current-password"
-                        onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="أدخل كلمة المرور"
-                      />
-                    </label>
-                  </>
-                )}
+                <label className="block">
+                  <span className="mb-2 block text-sm font-semibold text-slate-700">كلمة المرور</span>
+                  <input
+                    type="password"
+                    value={form.password}
+                    autoComplete="current-password"
+                    onChange={(event) => setForm((current) => ({ ...current, password: event.target.value }))}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
+                    placeholder="أدخل كلمة المرور"
+                  />
+                </label>
 
                 <button
                   type="submit"
-                  disabled={submitting || loadingSetupStatus}
+                  disabled={submitting}
                   className="w-full rounded-2xl bg-slate-950 px-5 py-3.5 text-sm font-bold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {loadingSetupStatus
-                    ? 'جارٍ التحقق من حالة الإعداد...'
-                    : submitting
-                    ? needsSetup
-                      ? 'جارٍ إنشاء الحساب...'
-                      : 'جارٍ تسجيل الدخول...'
-                    : needsSetup
-                      ? 'حفظ حساب المدير'
-                      : 'دخول لوحة الإدارة'}
+                  {submitting ? 'جارٍ تسجيل الدخول...' : 'دخول لوحة الإدارة'}
                 </button>
 
                 {error ? (
@@ -245,9 +125,8 @@ function AdminLoginPage() {
               </form>
 
               <div className="mt-6 rounded-2xl bg-slate-50 px-4 py-3 text-xs leading-6 text-slate-500">
-                {needsSetup
-                  ? 'بعد الحفظ سيتم حفظ اسم المستخدم وكلمة المرور في قاعدة البيانات، وبعدها ستستخدمهما لكل دخول لاحق.'
-                  : 'تسجيل الدخول يتم باسم المستخدم وكلمة المرور فقط.'}
+                إذا لم يعمل الدخول، تحقق من متغيرات البيئة: `ADMIN_USER` و `ADMIN_PASS` و
+                `ADMIN_SESSION_SECRET`.
               </div>
             </div>
           </div>

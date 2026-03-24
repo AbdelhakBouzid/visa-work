@@ -8,32 +8,18 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('visa-work-token');
-
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
     authApi
       .me()
       .then((response) => {
         setUser(response.user);
       })
       .catch(() => {
-        localStorage.removeItem('visa-work-token');
         setUser(null);
       })
       .finally(() => {
         setLoading(false);
       });
   }, []);
-
-  const persistSession = (response) => {
-    localStorage.setItem('visa-work-token', response.token);
-    setUser(response.user);
-    return response;
-  };
 
   const login = async (credentials) => {
     const response = await authApi.login(credentials).catch((error) => {
@@ -42,29 +28,18 @@ export function AuthProvider({ children }) {
       throw parsedError;
     });
 
-    return persistSession(response);
-  };
-
-  const completeInitialSetup = async (payload) => {
-    const response = await authApi.initialSetup(payload).catch((error) => {
-      const parsedError = new Error(extractApiError(error, 'فشل إنشاء حساب المدير.'));
-      parsedError.response = error.response;
-      throw parsedError;
-    });
-
-    return persistSession(response);
+    setUser(response.user);
+    return response;
   };
 
   const logout = async () => {
-    localStorage.removeItem('visa-work-token');
-    setUser(null);
-
     try {
       await authApi.logout();
     } catch (error) {
-      return null;
+      // Ignore logout transport failures and clear local auth state anyway.
     }
 
+    setUser(null);
     return null;
   };
 
@@ -74,7 +49,6 @@ export function AuthProvider({ children }) {
       loading,
       isAuthenticated: Boolean(user),
       login,
-      completeInitialSetup,
       logout
     }),
     [user, loading]

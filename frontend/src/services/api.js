@@ -17,7 +17,6 @@ const resolveApiBaseUrl = () => {
     const hasApiPrefix = normalizedPath === '/api' || normalizedPath.endsWith('/api');
 
     if (window.location.protocol === 'https:' && resolvedUrl.protocol === 'http:') {
-      console.warn('Ignoring insecure VITE_API_URL on HTTPS page and falling back to /api.');
       return '/api';
     }
 
@@ -36,17 +35,8 @@ const resolveApiBaseUrl = () => {
 };
 
 const api = axios.create({
-  baseURL: resolveApiBaseUrl()
-});
-
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('visa-work-token');
-
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-
-  return config;
+  baseURL: resolveApiBaseUrl(),
+  withCredentials: true
 });
 
 api.interceptors.response.use(
@@ -96,8 +86,6 @@ export const publicApi = {
 };
 
 export const authApi = {
-  getSetupStatus: async () => (await api.get('/auth/setup-status')).data,
-  initialSetup: async (payload) => (await api.post('/auth/setup', payload)).data,
   login: async (payload) => (await api.post('/auth/login', payload)).data,
   logout: async () => (await api.post('/auth/logout')).data,
   me: async () => (await api.get('/auth/me')).data

@@ -1,10 +1,8 @@
-import { Article } from '../models/Article.js';
 import { Category } from '../models/Category.js';
 import { Settings } from '../models/Settings.js';
-import { User } from '../models/User.js';
-import { seedArticles, seedCategories } from '../seed/data.js';
+import { seedCategories } from '../seed/data.js';
 
-const defaultSettingsPayload = (categories = [], articles = []) => ({
+const defaultSettingsPayload = (categories = []) => ({
   siteName: 'visa-work',
   siteDescription: 'منصة عربية حديثة لمتابعة فرص العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.',
   footerText: 'visa-work - منصة عربية مهنية للمقالات والأدلة الخاصة بالعمل بالخارج.',
@@ -20,7 +18,7 @@ const defaultSettingsPayload = (categories = [], articles = []) => ({
     heroSubtitle:
       'نقدم لك مقالات عملية عن تأشيرات العمل، الهجرة القانونية، الوثائق المطلوبة، وطرق دفع رسوم التأشيرة.',
     heroCtaText: 'ابدأ من أحدث الأدلة',
-    featuredArticleIds: articles.slice(0, 3).map((article) => article._id),
+    featuredArticleIds: [],
     highlightedCategoryIds: categories.slice(0, 4).map((category) => category._id),
     sectionTitles: {
       latest: 'أحدث المقالات',
@@ -47,8 +45,8 @@ const upsertSeedCategories = async () => {
   return Category.find().sort({ createdAt: 1 });
 };
 
-const ensureSettingsDocument = async (categories, articles = []) => {
-  const defaultSettings = defaultSettingsPayload(categories, articles);
+const ensureSettingsDocument = async (categories) => {
+  const defaultSettings = defaultSettingsPayload(categories);
   let settings = await Settings.findOne();
 
   if (!settings) {
@@ -69,7 +67,7 @@ const ensureSettingsDocument = async (categories, articles = []) => {
     changed = true;
   }
 
-  if (!currentHome.featuredArticleIds?.length && articles.length) {
+  if (!currentHome.featuredArticleIds?.length) {
     currentHome.featuredArticleIds = defaultSettings.home.featuredArticleIds;
     changed = true;
   }
@@ -89,116 +87,9 @@ const ensureSettingsDocument = async (categories, articles = []) => {
   return settings;
 };
 
-const ensureSeedArticles = async (author) => {
-  const categories = await upsertSeedCategories();
-  const categoryMap = new Map(categories.map((category) => [category.slug, category]));
-  const articleCount = await Article.countDocuments();
-
-  if (!articleCount && author) {
-    await Article.insertMany(
-      seedArticles.map((article) => ({
-        title: article.title,
-        slug: article.slug,
-        excerpt: article.excerpt,
-        content: article.content,
-        featuredImage: article.featuredImage,
-        category: categoryMap.get(article.categorySlug)?._id,
-        tags: article.tags,
-        status: article.status,
-        seoTitle: article.seoTitle,
-        seoDescription: article.seoDescription,
-        author: author._id,
-        views: article.views,
-        publishedAt: article.status === 'published' ? new Date() : null
-      }))
-    );
-  }
-
-  const publishedArticles = await Article.find({ status: 'published' }).sort({ createdAt: 1 });
-  await ensureSettingsDocument(categories, publishedArticles);
-
-  return { categories, publishedArticles };
-};
-
-const hasStoredCredentials = (user) =>
-  Boolean(
-    user &&
-      typeof user.username === 'string' &&
-      user.username.trim() &&
-      typeof user.password === 'string' &&
-      user.password.trim()
-  );
-
-const isSetupCompleteForUser = (user) =>
-  Boolean(user && user.role === 'admin' && user.requiresSetup === false && hasStoredCredentials(user));
-
-const findSetupCandidate = async () =>
-  User.findOne({
-    role: 'admin',
-    $or: [{ requiresSetup: true }, { username: null }, { username: '' }, { password: null }, { password: '' }]
-  }).sort({ createdAt: 1 });
-
 export const bootstrapInitialData = async () => {
   const categories = await upsertSeedCategories();
-  await ensureSettingsDocument(categories, []);
+  await ensureSettingsDocument(categories);
 
   return { categories: categories.length };
-};
-
-export const getSetupStatus = async () => {
-  const admins = await User.find({ role: 'admin' })
-    .sort({ createdAt: 1 })
-    .select('username role requiresSetup password')
-    .lean();
-  const setupCandidate = admins.find((admin) => admin.requiresSetup !== false || !hasStoredCredentials(admin));
-  const setupComplete = admins.some((admin) => isSetupCompleteForUser(admin));
-
-  return {
-    needsSetup: Boolean(setupCandidate) || !setupComplete
-  };
-};
-
-export const completeInitialAdminSetup = async ({ username, password }) => {
-  const existingCompletedAdmin = await User.findOne({
-    role: 'admin',
-    requiresSetup: false,
-    username: { $type: 'string', $nin: [''] },
-    password: { $type: 'string', $nin: [''] }
-  });
-  if (existingCompletedAdmin) {
-    const error = new Error('تم إعداد حساب المدير مسبقاً.');
-    error.statusCode = 409;
-    throw error;
-  }
-
-  const existingUser = await findSetupCandidate();
-  const normalizedUsername = username.trim().toLowerCase();
-  let user = existingUser;
-  const usernameOwner = await User.findOne({ username: normalizedUsername });
-
-  if (usernameOwner && (!existingUser || String(usernameOwner._id) !== String(existingUser._id))) {
-    const error = new Error('اسم المستخدم مستخدم بالفعل.');
-    error.statusCode = 409;
-    throw error;
-  }
-
-  if (!existingUser) {
-    user = await User.create({
-      name: 'Admin',
-      username: normalizedUsername,
-      password,
-      role: 'admin'
-    });
-  } else {
-    user.username = normalizedUsername;
-    user.password = password;
-    user.role = 'admin';
-    await user.save();
-  }
-  user.requiresSetup = false;
-  await user.save();
-
-  await ensureSeedArticles(user);
-
-  return user;
 };

@@ -45,11 +45,14 @@ npm run dev
 - الواجهة: `http://localhost:5173`
 - الـ API: `http://localhost:5000/api`
 
-## إعداد المدير لأول مرة
+## تسجيل دخول الأدمن
 
-- عند أول زيارة إلى `/admin/login` ستظهر شاشة إعداد أولي إذا لم يكتمل إعداد المدير.
-- يتم إدخال `username` + `password` + `confirm password`.
-- بعد الحفظ، يصبح تسجيل الدخول دائماً عبر `username + password` فقط.
+- صفحة `/admin/login` تعرض تسجيل دخول فقط.
+- لا يوجد إعداد أولي من الواجهة.
+- بيانات الأدمن الأساسية تأتي من متغيرات البيئة:
+  `ADMIN_USER`, `ADMIN_PASS`, `ADMIN_SESSION_SECRET`
+- بعد تسجيل الدخول الناجح، ينشئ السيرفر Session Cookie آمنة من نوع `HttpOnly`.
+- الجلسة تستمر لمدة 7 أيام، وتُستعاد تلقائياً عند فتح لوحة الإدارة من جديد.
 
 ## أوامر مهمة
 
@@ -73,7 +76,9 @@ npm run start
 ### متغيرات Vercel المطلوبة
 
 - `MONGO_URI`
-- `JWT_SECRET`
+- `ADMIN_USER`
+- `ADMIN_PASS`
+- `ADMIN_SESSION_SECRET`
 - `CLIENT_URL`
 
 ### متغير مهم لرفع الصور على Vercel

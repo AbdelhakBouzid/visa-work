@@ -6,6 +6,7 @@ import { Settings } from '../models/Settings.js';
 import { User } from '../models/User.js';
 import { seedArticles, seedCategories } from './data.js';
 import { loadEnv } from '../utils/loadEnv.js';
+import { ensureAdminAuthorRecord } from '../utils/adminSession.js';
 
 loadEnv();
 
@@ -14,13 +15,7 @@ const runSeed = async () => {
 
   await Promise.all([Article.deleteMany({}), Category.deleteMany({}), Settings.deleteMany({}), User.deleteMany({})]);
 
-  const admin = await User.create({
-    name: 'Admin',
-    username: 'setup-required',
-    password: 'temporary-password-should-be-replaced',
-    role: 'admin',
-    requiresSetup: true
-  });
+  const admin = await ensureAdminAuthorRecord();
 
   const categories = await Category.insertMany(seedCategories);
   const categoryMap = new Map(categories.map((category) => [category.slug, category]));
@@ -75,8 +70,8 @@ const runSeed = async () => {
   });
 
   console.log('Seed completed successfully');
-  console.log(`Admin placeholder username: ${admin.username}`);
-  console.log('Admin setup status: requires first-time setup from /admin/login');
+  console.log(`Admin author record ready: ${admin.username}`);
+  console.log('Admin login is controlled by ADMIN_USER and ADMIN_PASS environment variables.');
   console.log(`Settings created: ${settings.siteName}`);
 
   await mongoose.connection.close();
