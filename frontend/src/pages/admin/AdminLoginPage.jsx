@@ -18,8 +18,7 @@ function AdminLoginPage() {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [loginForm, setLoginForm] = useState({
-    username: DEFAULT_ADMIN_USERNAME,
-    password: DEFAULT_ADMIN_PASSWORD
+    username: DEFAULT_ADMIN_USERNAME
   });
   const [setupForm, setSetupForm] = useState({
     name: 'Abdelhak',
@@ -80,7 +79,7 @@ function AdminLoginPage() {
         });
       } else {
         await login({
-          identifier: loginForm.username
+          identifier: loginForm.username.trim()
         });
       }
 
@@ -205,17 +204,6 @@ function AdminLoginPage() {
                         onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
                         placeholder={`مثال: ${DEFAULT_ADMIN_USERNAME}`}
-                      />
-                    </label>
-
-                    <label className="block">
-                      <span className="mb-2 block text-sm font-semibold text-slate-700">كلمة المرور</span>
-                      <input
-                        type="password"
-                        value={loginForm.password}
-                        onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder={`مثال: ${DEFAULT_ADMIN_PASSWORD}`}
                       />
                     </label>
                   </>
