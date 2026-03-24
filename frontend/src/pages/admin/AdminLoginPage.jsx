@@ -6,6 +6,9 @@ import Seo from '../../components/common/Seo';
 import { useAuth } from '../../contexts/AuthContext';
 import { authApi, extractApiError } from '../../services/api';
 
+const DEFAULT_ADMIN_USERNAME = 'Abdelhak26';
+const DEFAULT_ADMIN_PASSWORD = 'ABDObzd@@2001';
+
 function AdminLoginPage() {
   const { login, completeInitialSetup } = useAuth();
   const navigate = useNavigate();
@@ -14,12 +17,15 @@ function AdminLoginPage() {
   const [needsSetup, setNeedsSetup] = useState(false);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [loginForm, setLoginForm] = useState({ username: '', password: '' });
+  const [loginForm, setLoginForm] = useState({
+    username: DEFAULT_ADMIN_USERNAME,
+    password: DEFAULT_ADMIN_PASSWORD
+  });
   const [setupForm, setSetupForm] = useState({
-    name: '',
-    username: '',
-    password: '',
-    confirmPassword: ''
+    name: 'Abdelhak',
+    username: DEFAULT_ADMIN_USERNAME,
+    password: DEFAULT_ADMIN_PASSWORD,
+    confirmPassword: DEFAULT_ADMIN_PASSWORD
   });
 
   useEffect(() => {
@@ -158,7 +164,7 @@ function AdminLoginPage() {
                         value={setupForm.username}
                         onChange={(event) => setSetupForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="مثال: abdelhak_admin"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_USERNAME}`}
                       />
                     </label>
 
@@ -199,7 +205,7 @@ function AdminLoginPage() {
                         value={loginForm.username}
                         onChange={(event) => setLoginForm((current) => ({ ...current, username: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="مثال: admin أو admin@visa-work.com"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_USERNAME}`}
                       />
                     </label>
 
@@ -210,7 +216,7 @@ function AdminLoginPage() {
                         value={loginForm.password}
                         onChange={(event) => setLoginForm((current) => ({ ...current, password: event.target.value }))}
                         className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white"
-                        placeholder="اكتب كلمة المرور"
+                        placeholder={`مثال: ${DEFAULT_ADMIN_PASSWORD}`}
                       />
                     </label>
                   </>
