@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowRight, ChevronDown, Languages, Menu, MoonStar, Sparkles, SunMedium, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/common/SearchBar';
 import { useSite } from '../contexts/SiteContext';
@@ -18,6 +18,19 @@ function PublicLayout() {
   const logoSrc = settings?.logo || '/visa-work-logo.svg';
   const DirectionalArrow = isRtl ? ArrowLeft : ArrowRight;
   const footerDescription = locale === 'ar' ? settings?.footerText || t('nav.footerDescription') : t('nav.footerDescription');
+
+  useEffect(() => {
+    if (!isMenuOpen) {
+      document.body.style.overflow = '';
+      return;
+    }
+
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
 
   const closeMobileMenu = () => setIsMenuOpen(false);
 
@@ -186,75 +199,77 @@ function PublicLayout() {
             </div>
 
             {isMenuOpen ? (
-              <div className="mt-4 rounded-[32px] border border-brand-100 bg-white/95 p-4 shadow-soft lg:hidden dark:border-slate-800 dark:bg-slate-950/95">
-                <div className="mb-4">
-                  <SearchBar compact onSubmit={handleSearch} />
-                </div>
+              <div className="fixed inset-x-0 bottom-0 top-[5.6rem] z-50 overflow-hidden px-4 pb-4 lg:hidden">
+                <div className="h-full overflow-y-auto overscroll-contain rounded-[32px] border border-brand-100 bg-white/95 p-4 shadow-soft dark:border-slate-800 dark:bg-slate-950/95">
+                  <div className="mb-4">
+                    <SearchBar compact onSubmit={handleSearch} />
+                  </div>
 
-                <div className="mb-4 grid gap-3 sm:grid-cols-2">
-                  {renderLocaleSwitcher(true)}
-                  {renderThemeToggle(true)}
-                </div>
+                  <div className="mb-4 grid gap-3 sm:grid-cols-2">
+                    {renderLocaleSwitcher(true)}
+                    {renderThemeToggle(true)}
+                  </div>
 
-                <div className="grid gap-3">
-                  {categoryGroups.map((group) => (
-                    <div key={group.key} className="rounded-[26px] border border-slate-200/80 bg-slate-50/80 p-2 dark:border-slate-800 dark:bg-slate-900/80">
-                      <button
-                        type="button"
-                        onClick={() => toggleMobileGroup(group.key)}
-                        className="flex w-full items-center justify-between gap-3 rounded-[22px] px-3 py-3 text-start"
-                      >
-                        <div>
-                          <p className="text-sm font-bold text-slate-950 dark:text-white">{group.label}</p>
-                          <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">{group.description}</p>
-                        </div>
-                        <ChevronDown
-                          className={`h-4 w-4 flex-none text-slate-500 transition ${
-                            openGroupKey === group.key ? 'rotate-180 text-brand-700 dark:text-brand-200' : ''
-                          }`}
-                        />
-                      </button>
+                  <div className="grid gap-3">
+                    {categoryGroups.map((group) => (
+                      <div key={group.key} className="rounded-[26px] border border-slate-200/80 bg-slate-50/80 p-2 dark:border-slate-800 dark:bg-slate-900/80">
+                        <button
+                          type="button"
+                          onClick={() => toggleMobileGroup(group.key)}
+                          className="flex w-full items-center justify-between gap-3 rounded-[22px] px-3 py-3 text-start"
+                        >
+                          <div>
+                            <p className="text-sm font-bold text-slate-950 dark:text-white">{group.label}</p>
+                            <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">{group.description}</p>
+                          </div>
+                          <ChevronDown
+                            className={`h-4 w-4 flex-none text-slate-500 transition ${
+                              openGroupKey === group.key ? 'rotate-180 text-brand-700 dark:text-brand-200' : ''
+                            }`}
+                          />
+                        </button>
 
-                      {openGroupKey === group.key ? (
-                        <div className="mt-2 grid gap-2">
-                          {group.items.map((item) => (
-                            <Link
-                              key={item.slug}
-                              to={item.href}
-                              onClick={closeMobileMenu}
-                              className="rounded-[22px] border border-white bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500/40 dark:hover:bg-brand-500/5 dark:hover:text-brand-200"
-                            >
-                              <span className="block">{item.name}</span>
-                              <span className="mt-1 block text-xs font-normal leading-6 text-slate-500 dark:text-slate-400">
-                                {item.description}
-                              </span>
-                            </Link>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-4 border-t border-brand-100 pt-4 dark:border-slate-800">
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{t('nav.siteLinks')}</p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {utilityNavigation.map((item) => (
-                      <NavLink
-                        key={item.to}
-                        to={item.to}
-                        onClick={closeMobileMenu}
-                        className={({ isActive }) =>
-                          `rounded-[22px] px-4 py-3 text-sm font-semibold transition ${
-                            isActive
-                              ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-200'
-                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
-                          }`
-                        }
-                      >
-                        {item.label}
-                      </NavLink>
+                        {openGroupKey === group.key ? (
+                          <div className="mt-2 grid gap-2">
+                            {group.items.map((item) => (
+                              <Link
+                                key={item.slug}
+                                to={item.href}
+                                onClick={closeMobileMenu}
+                                className="rounded-[22px] border border-white bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500/40 dark:hover:bg-brand-500/5 dark:hover:text-brand-200"
+                              >
+                                <span className="block">{item.name}</span>
+                                <span className="mt-1 block text-xs font-normal leading-6 text-slate-500 dark:text-slate-400">
+                                  {item.description}
+                                </span>
+                              </Link>
+                            ))}
+                          </div>
+                        ) : null}
+                      </div>
                     ))}
+                  </div>
+
+                  <div className="mt-4 border-t border-brand-100 pt-4 dark:border-slate-800">
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{t('nav.siteLinks')}</p>
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {utilityNavigation.map((item) => (
+                        <NavLink
+                          key={item.to}
+                          to={item.to}
+                          onClick={closeMobileMenu}
+                          className={({ isActive }) =>
+                            `rounded-[22px] px-4 py-3 text-sm font-semibold transition ${
+                              isActive
+                                ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/10 dark:text-brand-200'
+                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 dark:bg-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white'
+                            }`
+                          }
+                        >
+                          {item.label}
+                        </NavLink>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
