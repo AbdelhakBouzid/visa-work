@@ -16,6 +16,7 @@ function PublicLayout() {
   const categoryGroups = useMemo(() => buildCategoryGroups(categories, locale, t), [categories, locale]);
   const utilityNavigation = useMemo(() => buildUtilityNavigation(t), [locale]);
   const logoSrc = settings?.logo || '/visa-work-logo.svg';
+  const headerLogoSrc = '/logo.svg';
   const DirectionalArrow = isRtl ? ArrowLeft : ArrowRight;
   const footerDescription = locale === 'ar' ? settings?.footerText || t('nav.footerDescription') : t('nav.footerDescription');
 
@@ -111,7 +112,7 @@ function PublicLayout() {
               </button>
 
               <Link to="/" className="order-2 min-w-0 flex-none lg:order-1" onClick={closeMobileMenu}>
-                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-12 w-auto object-contain sm:h-14" />
+                <img src={headerLogoSrc} alt={settings?.siteName || 'visa-work'} className="h-auto w-10 object-contain sm:w-12 md:w-14" />
               </Link>
 
               <nav className="order-2 hidden items-center gap-3 lg:flex">
