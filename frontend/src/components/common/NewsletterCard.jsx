@@ -27,7 +27,7 @@ function NewsletterCard() {
     <section className="rounded-[32px] bg-hero px-6 py-10 text-white shadow-soft md:px-10">
       <div className="grid gap-8 md:grid-cols-[1fr_360px] md:items-center">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-sm font-semibold">
+          <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold ring-1 ring-white/10">
             <Mail className="h-4 w-4" />
             النشرة البريدية
           </span>
@@ -38,7 +38,7 @@ function NewsletterCard() {
             اشترك لتصلك المقالات الجديدة، التحديثات القانونية المهمة، وأفضل الأدلة العملية باللغة العربية.
           </p>
         </div>
-        <form onSubmit={handleSubmit} className="rounded-[28px] bg-white p-5 text-slate-900 shadow-soft">
+        <form onSubmit={handleSubmit} className="rounded-[28px] border border-brand-100/70 bg-white p-5 text-slate-900 shadow-soft">
           <label className="mb-3 block text-sm font-semibold text-slate-700">البريد الإلكتروني</label>
           <input
             type="email"
@@ -51,7 +51,7 @@ function NewsletterCard() {
           <button
             type="submit"
             disabled={submitting}
-            className="mt-4 w-full rounded-2xl bg-accent-400 px-4 py-3 text-sm font-bold text-slate-950 transition hover:bg-accent-300 disabled:opacity-60"
+            className="mt-4 w-full rounded-2xl bg-gradient-to-r from-accent-600 to-accent-400 px-4 py-3 text-sm font-bold text-white transition hover:from-accent-700 hover:to-accent-500 disabled:opacity-60"
           >
             {submitting ? 'جارٍ الاشتراك...' : 'اشترك الآن'}
           </button>

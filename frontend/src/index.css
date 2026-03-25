@@ -4,7 +4,7 @@
 
 :root {
   color-scheme: light;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Cairo', 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 html {
@@ -14,6 +14,9 @@ html {
 body {
   @apply bg-slate-50 text-slate-800 antialiased;
   min-height: 100vh;
+  background-image:
+    radial-gradient(circle at top, rgba(39, 120, 186, 0.08), transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f8fafc 40%, #eef5fb 100%);
 }
 
 a {
@@ -29,23 +32,58 @@ a {
 }
 
 .surface-card {
-  @apply rounded-3xl border border-white/60 bg-white/90 shadow-soft backdrop-blur;
+  @apply rounded-[30px] border border-brand-100/80 bg-white/95 shadow-soft backdrop-blur;
 }
 
 .section-title {
-  @apply text-2xl font-bold text-slate-900 md:text-3xl;
+  @apply text-2xl font-black tracking-tight text-slate-950 md:text-3xl;
 }
 
 .section-copy {
   @apply text-sm leading-7 text-slate-600 md:text-base;
 }
 
+.brand-primary-button {
+  @apply inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent-600 to-accent-400 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-accent-500/20 transition duration-200 hover:-translate-y-0.5 hover:from-accent-700 hover:to-accent-500;
+}
+
+.brand-outline-button {
+  @apply inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition duration-200 hover:border-white/30 hover:bg-white/20;
+}
+
 .hero-pattern {
-  background-color: #10232e;
+  background-color: #071d38;
   background-image:
-    radial-gradient(circle at top right, rgba(242, 191, 70, 0.18), transparent 30%),
-    radial-gradient(circle at bottom left, rgba(93, 147, 174, 0.2), transparent 24%),
-    linear-gradient(135deg, #10232e 0%, #234658 55%, #2e5a71 100%);
+    radial-gradient(circle at top right, rgba(255, 127, 14, 0.28), transparent 32%),
+    radial-gradient(circle at bottom left, rgba(39, 120, 186, 0.24), transparent 28%),
+    linear-gradient(135deg, #071d38 0%, #0d4a82 54%, #1e77c2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 120px 120px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), transparent 80%);
+  pointer-events: none;
+}
+
+.hero-pattern::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  left: -8%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 68%);
+  opacity: 0.55;
+  filter: blur(12px);
+  pointer-events: none;
 }
 
 .article-content {
@@ -76,6 +114,17 @@ a {
 
 .article-content a {
   @apply text-brand-700 underline decoration-brand-300 underline-offset-4;
+}
+
+input,
+textarea,
+select {
+  @apply focus:outline-none focus:ring-4 focus:ring-brand-100/70;
+}
+
+::selection {
+  background: rgba(255, 127, 14, 0.18);
+  color: #0b3154;
 }
 
 .clamp-2,

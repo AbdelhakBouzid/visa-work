@@ -7,35 +7,35 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#f5f9fb',
-          100: '#d9e8ef',
-          200: '#b8d4e1',
-          300: '#8bb5ca',
-          400: '#5d93ae',
-          500: '#3f758f',
-          600: '#2e5a71',
-          700: '#234658',
-          800: '#193342',
-          900: '#10232e'
+          50: '#eef7ff',
+          100: '#d8eafc',
+          200: '#b8d8f4',
+          300: '#86bbe7',
+          400: '#5299d3',
+          500: '#2778ba',
+          600: '#125e9f',
+          700: '#0d4a82',
+          800: '#0d3d6a',
+          900: '#0b3154'
         },
         accent: {
-          50: '#fff9ef',
-          100: '#fcebc3',
-          200: '#f8d98b',
-          300: '#f2bf46',
-          400: '#e7a91f',
-          500: '#c88514',
-          600: '#a06112',
-          700: '#7f4814',
-          800: '#683b16',
-          900: '#593316'
+          50: '#fff6ed',
+          100: '#ffe7cc',
+          200: '#ffd19b',
+          300: '#ffb468',
+          400: '#ff972a',
+          500: '#ff7f0e',
+          600: '#e86800',
+          700: '#c45300',
+          800: '#9f4306',
+          900: '#7f3809'
         }
       },
       boxShadow: {
-        soft: '0 24px 60px -24px rgba(15, 23, 42, 0.35)'
+        soft: '0 28px 80px -36px rgba(13, 74, 130, 0.42)'
       },
       backgroundImage: {
-        hero: 'radial-gradient(circle at top, rgba(242,191,70,0.18), transparent 36%), linear-gradient(135deg, #10232e 0%, #234658 55%, #2e5a71 100%)'
+        hero: 'radial-gradient(circle at top right, rgba(255,127,14,0.26), transparent 34%), radial-gradient(circle at bottom left, rgba(39,120,186,0.24), transparent 28%), linear-gradient(135deg, #071d38 0%, #0d4a82 54%, #1e77c2 100%)'
       }
     }
   },

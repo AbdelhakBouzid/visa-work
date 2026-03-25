@@ -1,21 +1,20 @@
-import { Globe2, Menu, Search, ShieldCheck } from 'lucide-react';
-import { useState } from 'react';
-import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { ArrowLeft, ChevronDown, Menu, Sparkles, X } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import SearchBar from '../components/common/SearchBar';
 import { useSite } from '../contexts/SiteContext';
-
-const navigation = [
-  { label: 'الرئيسية', to: '/' },
-  { label: 'المقالات', to: '/articles' },
-  { label: 'من نحن', to: '/about' },
-  { label: 'اتصل بنا', to: '/contact' },
-  { label: 'سياسة الخصوصية', to: '/privacy' }
-];
+import { buildCategoryGroups, utilityNavigation } from '../utils/navigation';
 
 function PublicLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { settings, categories } = useSite();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openGroupKey, setOpenGroupKey] = useState('work-abroad');
+  const categoryGroups = useMemo(() => buildCategoryGroups(categories), [categories]);
+  const logoSrc = settings?.logo || '/visa-work-logo.svg';
+
+  const closeMobileMenu = () => setIsMenuOpen(false);
 
   const handleSearch = (value) => {
     if (!value) {
@@ -23,123 +22,229 @@ function PublicLayout() {
     }
 
     navigate(`/search?q=${encodeURIComponent(value)}`);
-    setIsOpen(false);
+    closeMobileMenu();
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="sticky top-0 z-40 border-b border-white/40 bg-slate-50/90 backdrop-blur">
-        <div className="page-shell py-4">
-          <div className="flex items-center justify-between gap-4">
-            <button
-              type="button"
-              onClick={() => setIsOpen((current) => !current)}
-              className="inline-flex rounded-2xl border border-slate-200 bg-white p-3 text-slate-700 lg:hidden"
-              aria-label="فتح القائمة"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+  const toggleMobileGroup = (key) => {
+    setOpenGroupKey((current) => (current === key ? '' : key));
+  };
 
-            <Link to="/" className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-hero text-xl font-black text-white shadow-soft">
-                V
-              </div>
-              <div>
-                <p className="text-xl font-black tracking-tight text-slate-950">
-                  {settings?.siteName || 'visa-work'}
-                </p>
-                <p className="text-xs text-slate-500">منصة عربية للعمل بالخارج والتأشيرات</p>
-              </div>
+  const isGroupActive = (group) => group.items.some((item) => location.pathname === `/category/${item.slug}`);
+
+  return (
+    <div className="min-h-screen bg-transparent">
+      <header className="sticky top-0 z-40 border-b border-brand-100/80 bg-white/90 backdrop-blur-xl">
+        <div className="page-shell py-4">
+          <div className="flex items-center justify-between gap-4 lg:gap-8">
+            <Link to="/" className="min-w-0 flex-none" onClick={closeMobileMenu}>
+              <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-14 w-auto sm:h-16" />
             </Link>
 
-            <nav className="hidden items-center gap-6 lg:flex">
-              {navigation.map((item) => (
+            <nav className="hidden items-center gap-3 lg:flex">
+              {categoryGroups.map((group) => (
+                <div key={group.key} className="group relative">
+                  <button
+                    type="button"
+                    className={`inline-flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition ${
+                      isGroupActive(group)
+                        ? 'border-brand-200 bg-brand-50 text-brand-700'
+                        : 'border-transparent bg-slate-100/90 text-slate-700 hover:border-brand-100 hover:bg-white hover:text-brand-700'
+                    }`}
+                    aria-haspopup="true"
+                  >
+                    {group.label}
+                    <ChevronDown className="h-4 w-4 transition group-hover:rotate-180" />
+                  </button>
+
+                  <div className="pointer-events-none invisible absolute right-0 top-full z-50 mt-3 w-[320px] translate-y-2 opacity-0 transition duration-200 group-hover:pointer-events-auto group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                    <div className="rounded-[30px] border border-brand-100 bg-white/95 p-3 shadow-soft">
+                      <div className="px-3 pb-3">
+                        <p className="text-sm font-bold text-slate-950">{group.label}</p>
+                        <p className="mt-1 text-xs leading-6 text-slate-500">{group.description}</p>
+                      </div>
+
+                      <div className="grid gap-2">
+                        {group.items.map((item) => (
+                          <Link
+                            key={item.slug}
+                            to={item.href}
+                            className="group/item flex items-start justify-between gap-3 rounded-[22px] border border-transparent bg-slate-50/90 px-4 py-3 transition hover:border-brand-100 hover:bg-brand-50"
+                          >
+                            <div>
+                              <p className="text-sm font-bold text-slate-900 transition group-hover/item:text-brand-700">
+                                {item.name}
+                              </p>
+                              <p className="mt-1 text-xs leading-6 text-slate-500">{item.description}</p>
+                            </div>
+                            <ArrowLeft className="mt-1 h-4 w-4 flex-none text-slate-400 transition group-hover/item:-translate-x-1 group-hover/item:text-accent-500" />
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </nav>
+
+            <div className="hidden min-w-0 flex-1 lg:block">
+              <div className="mr-auto max-w-md">
+                <SearchBar compact onSubmit={handleSearch} />
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((current) => !current)}
+              className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 shadow-sm transition hover:border-brand-200 hover:text-brand-900 lg:hidden"
+              aria-expanded={isMenuOpen}
+              aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
+
+          <div className="mt-4 hidden items-center justify-between gap-6 border-t border-brand-100/70 pt-4 lg:flex">
+            <div className="flex flex-wrap items-center gap-2">
+              {utilityNavigation.map((item) => (
                 <NavLink
                   key={item.to}
                   to={item.to}
                   className={({ isActive }) =>
-                    `text-sm font-semibold transition ${
-                      isActive ? 'text-brand-700' : 'text-slate-600 hover:text-slate-950'
+                    `rounded-full px-4 py-2 text-xs font-semibold transition ${
+                      isActive
+                        ? 'bg-brand-50 text-brand-700'
+                        : 'text-slate-500 hover:bg-slate-100 hover:text-slate-900'
                     }`
                   }
                 >
                   {item.label}
                 </NavLink>
               ))}
-            </nav>
-
-            <div className="hidden w-full max-w-sm lg:block">
-              <SearchBar compact onSubmit={handleSearch} />
             </div>
+
+            <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-4 py-2 text-xs font-semibold text-brand-700">
+              <Sparkles className="h-4 w-4 text-accent-500" />
+              تجربة أكثر تنظيماً للعمل بالخارج والتأشيرات والأدلة
+            </span>
           </div>
 
-          {isOpen ? (
-            <div className="mt-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-soft lg:hidden">
+          {isMenuOpen ? (
+            <div className="mt-4 rounded-[32px] border border-brand-100 bg-white/95 p-4 shadow-soft lg:hidden">
               <div className="mb-4">
                 <SearchBar compact onSubmit={handleSearch} />
               </div>
+
               <div className="grid gap-3">
-                {navigation.map((item) => (
-                  <NavLink
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-2xl px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-brand-50"
-                  >
-                    {item.label}
-                  </NavLink>
+                {categoryGroups.map((group) => (
+                  <div key={group.key} className="rounded-[26px] border border-slate-200/80 bg-slate-50/80 p-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileGroup(group.key)}
+                      className="flex w-full items-center justify-between gap-3 rounded-[22px] px-3 py-3 text-right"
+                    >
+                      <div>
+                        <p className="text-sm font-bold text-slate-950">{group.label}</p>
+                        <p className="mt-1 text-xs leading-6 text-slate-500">{group.description}</p>
+                      </div>
+                      <ChevronDown
+                        className={`h-4 w-4 flex-none text-slate-500 transition ${
+                          openGroupKey === group.key ? 'rotate-180 text-brand-700' : ''
+                        }`}
+                      />
+                    </button>
+
+                    {openGroupKey === group.key ? (
+                      <div className="mt-2 grid gap-2">
+                        {group.items.map((item) => (
+                          <Link
+                            key={item.slug}
+                            to={item.href}
+                            onClick={closeMobileMenu}
+                            className="rounded-[22px] border border-white bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition hover:border-brand-100 hover:bg-brand-50 hover:text-brand-700"
+                          >
+                            <span className="block">{item.name}</span>
+                            <span className="mt-1 block text-xs font-normal leading-6 text-slate-500">
+                              {item.description}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
                 ))}
+              </div>
+
+              <div className="mt-4 border-t border-brand-100 pt-4">
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400">روابط الموقع</p>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {utilityNavigation.map((item) => (
+                    <NavLink
+                      key={item.to}
+                      to={item.to}
+                      onClick={closeMobileMenu}
+                      className={({ isActive }) =>
+                        `rounded-[22px] px-4 py-3 text-sm font-semibold transition ${
+                          isActive
+                            ? 'bg-brand-50 text-brand-700'
+                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
+                        }`
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  ))}
+                </div>
               </div>
             </div>
           ) : null}
         </div>
-
-        <div className="border-t border-white/50 bg-white/75">
-          <div className="page-shell flex flex-wrap items-center gap-3 py-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-brand-50 px-4 py-2 text-xs font-semibold text-brand-700">
-              <Globe2 className="h-4 w-4" />
-              أقسام المنصة
-            </span>
-            {categories.slice(0, 6).map((category) => (
-              <Link
-                key={category._id}
-                to={`/category/${category.slug}`}
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 hover:border-brand-200 hover:text-brand-700"
-              >
-                {category.name}
-              </Link>
-            ))}
-          </div>
-        </div>
       </header>
 
-      <main>
+      <main className="pb-4">
         <Outlet />
       </main>
 
-      <footer className="mt-20 border-t border-slate-200 bg-slate-950 text-slate-200">
-        <div className="page-shell grid gap-10 py-12 md:grid-cols-[1.2fr_0.8fr]">
+      <footer className="mt-20 border-t border-brand-100 bg-slate-950 text-slate-200">
+        <div className="page-shell grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr_0.8fr]">
           <div>
-            <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-600 font-black text-white">
-                V
-              </div>
-              <div>
-                <p className="text-xl font-black">{settings?.siteName || 'visa-work'}</p>
-                <p className="text-sm text-slate-400">{settings?.siteDescription}</p>
-              </div>
+            <div className="inline-flex rounded-[30px] bg-white px-5 py-4 shadow-soft">
+              <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-14 w-auto sm:h-16" />
             </div>
-            <p className="mt-5 max-w-2xl text-sm leading-8 text-slate-400">
+            <p className="mt-5 max-w-xl text-sm leading-8 text-slate-400">
               {settings?.footerText ||
                 'منصة عربية مهنية تقدم محتوى موثوقاً عن العمل بالخارج وتأشيرات العمل والهجرة القانونية.'}
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div>
+            <h3 className="text-sm font-bold text-white">الأقسام الرئيسية</h3>
+            <div className="mt-4 grid gap-3">
+              {categoryGroups.map((group) => (
+                <div key={group.key} className="rounded-[28px] border border-white/10 bg-white/5 p-4">
+                  <Link to={group.href} className="text-sm font-bold text-white hover:text-accent-300">
+                    {group.label}
+                  </Link>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.slug}
+                        to={item.href}
+                        className="rounded-full border border-white/10 px-3 py-1.5 text-xs text-slate-300 transition hover:border-accent-400/40 hover:text-white"
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-1">
             <div>
-              <h3 className="text-sm font-bold text-white">روابط مهمة</h3>
+              <h3 className="text-sm font-bold text-white">روابط الموقع</h3>
               <div className="mt-4 grid gap-3 text-sm text-slate-400">
-                {navigation.map((item) => (
+                {utilityNavigation.map((item) => (
                   <Link key={item.to} to={item.to} className="hover:text-white">
                     {item.label}
                   </Link>
@@ -160,10 +265,6 @@ function PublicLayout() {
                     </a>
                   ) : null
                 )}
-                <Link to="/admin/login" className="inline-flex items-center gap-2 hover:text-white">
-                  <ShieldCheck className="h-4 w-4" />
-                  دخول الإدارة
-                </Link>
               </div>
             </div>
           </div>

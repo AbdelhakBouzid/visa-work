@@ -5,6 +5,7 @@ import { seedCategories } from '../seed/data.js';
 const defaultSettingsPayload = (categories = []) => ({
   siteName: 'visa-work',
   siteDescription: 'منصة عربية حديثة لمتابعة فرص العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.',
+  logo: '/visa-work-logo.svg',
   footerText: 'visa-work - منصة عربية مهنية للمقالات والأدلة الخاصة بالعمل بالخارج.',
   contactEmail: 'contact@visa-work.com',
   socialLinks: {
@@ -64,6 +65,11 @@ const ensureSettingsDocument = async (categories) => {
 
   if (!currentHome.highlightedCategoryIds?.length && categories.length) {
     currentHome.highlightedCategoryIds = defaultSettings.home.highlightedCategoryIds;
+    changed = true;
+  }
+
+  if (!settings.logo) {
+    settings.logo = defaultSettings.logo;
     changed = true;
   }
 

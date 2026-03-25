@@ -10,7 +10,7 @@ function ArticleCard({ article, featured = false }) {
 
   return (
     <article
-      className={`group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-soft transition hover:-translate-y-1 hover:shadow-2xl ${
+      className={`group overflow-hidden rounded-[30px] border border-brand-100/80 bg-white/95 shadow-soft transition duration-300 hover:-translate-y-1.5 hover:border-brand-200 hover:shadow-2xl ${
         featured ? 'grid gap-0 md:grid-cols-[1.15fr_0.85fr]' : ''
       }`}
     >
@@ -30,7 +30,9 @@ function ArticleCard({ article, featured = false }) {
           <span className="text-xs text-slate-400">{formatArabicDate(article.publishedAt || article.createdAt)}</span>
         </div>
         <Link to={`/article/${article.slug}`} className="block">
-          <h3 className={`${featured ? 'text-3xl' : 'text-xl'} font-bold leading-tight text-slate-900`}>
+          <h3
+            className={`${featured ? 'text-3xl' : 'text-xl'} font-bold leading-tight text-slate-900 transition group-hover:text-brand-700`}
+          >
             {article.title}
           </h3>
         </Link>
