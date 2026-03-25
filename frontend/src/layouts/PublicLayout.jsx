@@ -15,8 +15,7 @@ function PublicLayout() {
   const [openGroupKey, setOpenGroupKey] = useState('work-abroad');
   const categoryGroups = useMemo(() => buildCategoryGroups(categories, locale, t), [categories, locale]);
   const utilityNavigation = useMemo(() => buildUtilityNavigation(t), [locale]);
-  const logoSrc = settings?.logo || '/visa-work-logo.svg';
-  const headerLogoSrc = '/logo.svg';
+  const logoSrc = '/logo.svg';
   const DirectionalArrow = isRtl ? ArrowLeft : ArrowRight;
   const footerDescription = locale === 'ar' ? settings?.footerText || t('nav.footerDescription') : t('nav.footerDescription');
 
@@ -112,7 +111,7 @@ function PublicLayout() {
               </button>
 
               <Link to="/" className="order-2 min-w-0 flex-none lg:order-1" onClick={closeMobileMenu}>
-                <img src={headerLogoSrc} alt={settings?.siteName || 'visa-work'} className="h-auto w-10 object-contain sm:w-12 md:w-14" />
+                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-auto w-10 object-contain sm:w-12 md:w-14" />
               </Link>
 
               <nav className="order-2 hidden items-center gap-3 lg:flex">
@@ -284,8 +283,8 @@ function PublicLayout() {
 
         <footer className="mt-20 border-t border-brand-100 bg-slate-950 text-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <div className="page-shell grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr_0.8fr]">
-            <div>
-              <div className="inline-flex rounded-[30px] bg-white px-5 py-4 shadow-soft dark:bg-slate-900">
+            <div className="text-center">
+              <div className="mx-auto inline-flex justify-center rounded-[30px] bg-white px-5 py-4 shadow-soft dark:bg-slate-900">
                 <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-12 w-auto object-contain sm:h-14" />
               </div>
               <p className="mt-5 max-w-xl text-sm leading-8 text-slate-400">{footerDescription}</p>

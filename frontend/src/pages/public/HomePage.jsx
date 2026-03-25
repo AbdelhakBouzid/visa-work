@@ -51,7 +51,7 @@ function HomePage() {
   const featuredArticles = data?.featuredArticles || [];
   const popularArticles = data?.popularArticles || [];
   const categorySections = data?.categorySections || [];
-  const logoSrc = settings?.logo || '/visa-work-logo.svg';
+  const logoSrc = '/logo.svg';
   const heroTitle = locale === 'ar' ? settings?.home?.heroTitle || t('home.heroTitle') : t('home.heroTitle');
   const heroSubtitle = locale === 'ar' ? settings?.home?.heroSubtitle || t('home.heroSubtitle') : t('home.heroSubtitle');
   const heroCta = locale === 'ar' ? settings?.home?.heroCtaText || t('home.heroCta') : t('home.heroCta');
