@@ -1,12 +1,4 @@
-import {
-  ArrowLeft,
-  ArrowRight,
-  BriefcaseBusiness,
-  CreditCard,
-  FileBadge2,
-  ShieldCheck,
-  Sparkles
-} from 'lucide-react';
+import { ArrowLeft, ArrowRight, BriefcaseBusiness, FileBadge2, ShieldCheck, Sparkles } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ArticleCard from '../../components/common/ArticleCard';
@@ -43,35 +35,6 @@ function HomePage() {
   const categoryGroups = useMemo(() => buildCategoryGroups(categories, locale, t), [categories, locale]);
   const DirectionalArrow = isRtl ? ArrowLeft : ArrowRight;
 
-  const featureCards = [
-    {
-      icon: BriefcaseBusiness,
-      title: t('home.features.workAbroadTitle'),
-      description: t('home.features.workAbroadDescription')
-    },
-    {
-      icon: ShieldCheck,
-      title: t('home.features.visasTitle'),
-      description: t('home.features.visasDescription')
-    },
-    {
-      icon: FileBadge2,
-      title: t('home.features.documentsTitle'),
-      description: t('home.features.documentsDescription')
-    },
-    {
-      icon: CreditCard,
-      title: t('home.features.paymentsTitle'),
-      description: t('home.features.paymentsDescription')
-    }
-  ];
-
-  const heroHighlights = [
-    { value: '3', label: t('home.highlightMain'), description: t('home.highlightMainDescription') },
-    { value: '6', label: t('home.highlightSections'), description: t('home.highlightSectionsDescription') },
-    { value: '100%', label: t('home.highlightOrganized'), description: t('home.highlightOrganizedDescription') }
-  ];
-
   useEffect(() => {
     publicApi
       .getHome()
@@ -104,7 +67,7 @@ function HomePage() {
       <Seo title={settings?.siteName} description={locale === 'ar' ? settings?.siteDescription : t('meta.defaultDescription')} />
 
       <section className="hero-pattern text-white">
-        <div className="page-shell grid gap-10 py-16 md:py-24 xl:grid-cols-[1.04fr_0.96fr]">
+        <div className="page-shell py-16 md:py-24">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 py-2 pl-2 pr-4 shadow-soft">
               <span className="rounded-full bg-white/95 p-1.5">
@@ -125,55 +88,6 @@ function HomePage() {
               <Link to="/articles" className="brand-primary-button">
                 {heroCta}
               </Link>
-              <Link to="/about" className="brand-outline-button">
-                {t('home.aboutCta')}
-              </Link>
-            </div>
-
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
-              {heroHighlights.map((item) => (
-                <div key={item.label} className="rounded-[28px] border border-white/10 bg-white/10 px-5 py-4 backdrop-blur-sm">
-                  <p className="text-2xl font-black text-accent-200">{item.value}</p>
-                  <p className="mt-2 text-sm font-semibold text-white">{item.label}</p>
-                  <p className="mt-2 text-xs leading-6 text-white/70">{item.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-[34px] border border-white/10 bg-slate-950/20 p-6 text-white shadow-soft backdrop-blur">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="max-w-xl">
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-semibold text-white/80">
-                  <Sparkles className="h-4 w-4 text-accent-200" />
-                  {t('home.showcaseBadge')}
-                </span>
-                <h2 className="mt-5 text-2xl font-bold md:text-3xl">{t('home.showcaseTitle')}</h2>
-                <p className="mt-3 text-sm leading-7 text-white/80 md:text-base">{t('home.showcaseDescription')}</p>
-              </div>
-
-              <div className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold text-white/80">
-                {t('home.showcaseCount')}
-              </div>
-            </div>
-
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
-              {featureCards.map((card) => {
-                const Icon = card.icon;
-
-                return (
-                  <div
-                    key={card.title}
-                    className="rounded-[28px] border border-white/10 bg-white/5 p-5 backdrop-blur-sm transition hover:bg-white/10"
-                  >
-                    <div className="inline-flex rounded-2xl bg-white/10 p-3 text-accent-200 ring-1 ring-white/10">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h2 className="mt-4 text-lg font-bold">{card.title}</h2>
-                    <p className="mt-2 text-sm leading-7 text-white/80">{card.description}</p>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -181,7 +95,7 @@ function HomePage() {
 
       <div className="page-shell py-16">
         <section>
-          <SectionHeading eyebrow={t('home.pathsEyebrow')} title={t('home.pathsTitle')} description={t('home.pathsDescription')} />
+          <SectionHeading eyebrow={t('home.pathsEyebrow')} title={t('home.pathsTitle')} />
 
           <div className="grid gap-5 lg:grid-cols-3">
             {categoryGroups.map((group) => {
@@ -196,12 +110,7 @@ function HomePage() {
                     <Icon className="h-5 w-5" />
                   </div>
 
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <h3 className="text-2xl font-bold text-slate-950 dark:text-white">{group.label}</h3>
-                    <span className="rounded-full bg-accent-50 px-3 py-1 text-xs font-bold text-accent-700 dark:bg-accent-500/10 dark:text-accent-200">
-                      {t('common.sectionsCount', { count: group.items.length })}
-                    </span>
-                  </div>
+                  <h3 className="mt-5 text-2xl font-bold text-slate-950 dark:text-white">{group.label}</h3>
 
                   <p className="mt-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{group.description}</p>
 
