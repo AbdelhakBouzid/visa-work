@@ -12,7 +12,7 @@ const settingsSchema = new mongoose.Schema(
     },
     logo: {
       type: String,
-      default: '/visa-work-logo.svg'
+      default: '/logo.svg'
     },
     socialLinks: {
       facebook: { type: String, default: '' },

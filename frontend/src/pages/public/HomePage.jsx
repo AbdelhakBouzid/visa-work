@@ -51,7 +51,6 @@ function HomePage() {
   const featuredArticles = data?.featuredArticles || [];
   const popularArticles = data?.popularArticles || [];
   const categorySections = data?.categorySections || [];
-  const logoSrc = '/logo.svg';
   const heroTitle = locale === 'ar' ? settings?.home?.heroTitle || t('home.heroTitle') : t('home.heroTitle');
   const heroSubtitle = locale === 'ar' ? settings?.home?.heroSubtitle || t('home.heroSubtitle') : t('home.heroSubtitle');
   const heroCta = locale === 'ar' ? settings?.home?.heroCtaText || t('home.heroCta') : t('home.heroCta');
@@ -69,10 +68,7 @@ function HomePage() {
       <section className="hero-pattern text-white">
         <div className="page-shell py-16 md:py-24">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 py-2 pl-2 pr-4 shadow-soft">
-              <span className="rounded-full bg-white/95 p-1.5">
-                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-8 w-auto sm:h-10" />
-              </span>
+            <div className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-4 py-2 shadow-soft">
               <span className="text-sm font-semibold text-white/90">{t('home.heroBadge')}</span>
             </div>
 
