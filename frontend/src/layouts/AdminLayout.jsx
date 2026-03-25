@@ -1,6 +1,7 @@
-import { FileText, Home, LayoutDashboard, LogOut, Settings, Shapes } from 'lucide-react';
+import { FileText, Home, LayoutDashboard, LogOut, MoonStar, Settings, Shapes, SunMedium } from 'lucide-react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useUi } from '../contexts/UiContext';
 
 const links = [
   { to: '/admin', label: 'لوحة التحكم', icon: LayoutDashboard, end: true },
@@ -13,6 +14,7 @@ const links = [
 function AdminLayout() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useUi();
 
   const handleLogout = async () => {
     await logout();
@@ -20,50 +22,61 @@ function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <div className="grid min-h-screen lg:grid-cols-[290px_1fr]">
-        <aside className="border-l border-slate-200 bg-slate-950 p-6 text-white">
-          <div className="rounded-3xl bg-white/5 p-5">
-            <p className="text-xs text-slate-400">visa-work</p>
-            <h1 className="mt-2 text-2xl font-black">لوحة الإدارة</h1>
-            <p className="mt-2 text-sm text-slate-400">
-              أهلاً {user?.name || 'بالمدير'}، يمكنك إدارة المقالات والتصنيفات وإعدادات الصفحة الرئيسية.
-            </p>
+    <div className={theme === 'dark' ? 'dark' : ''}>
+      <div className="min-h-screen bg-slate-100 transition-colors dark:bg-slate-950">
+        <div className="grid min-h-screen lg:grid-cols-[290px_1fr]">
+          <aside className="border-l border-slate-200 bg-slate-950 p-6 text-white dark:border-slate-800">
+            <div className="rounded-3xl bg-white/5 p-5">
+              <p className="text-xs text-slate-400">visa-work</p>
+              <h1 className="mt-2 text-2xl font-black">لوحة الإدارة</h1>
+              <p className="mt-2 text-sm text-slate-400">
+                أهلاً {user?.name || 'بالمدير'}، يمكنك إدارة المقالات والتصنيفات وإعدادات الصفحة الرئيسية.
+              </p>
+            </div>
+
+            <nav className="mt-8 grid gap-2">
+              {links.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    end={item.end}
+                    className={({ isActive }) =>
+                      `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                        isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white'
+                      }`
+                    }
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+            </nav>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="mt-8 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
+            >
+              <LogOut className="h-4 w-4" />
+              تسجيل الخروج
+            </button>
+
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="mt-3 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
+            >
+              {theme === 'dark' ? <SunMedium className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
+              {theme === 'dark' ? 'الوضع النهاري' : 'الوضع الليلي'}
+            </button>
+          </aside>
+
+          <div className="p-4 sm:p-6 lg:p-10">
+            <Outlet />
           </div>
-
-          <nav className="mt-8 grid gap-2">
-            {links.map((item) => {
-              const Icon = item.icon;
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  end={item.end}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition ${
-                      isActive ? 'bg-brand-600 text-white' : 'text-slate-300 hover:bg-white/5 hover:text-white'
-                    }`
-                  }
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
-                </NavLink>
-              );
-            })}
-          </nav>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="mt-8 inline-flex items-center gap-2 rounded-2xl border border-white/10 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:bg-white/5"
-          >
-            <LogOut className="h-4 w-4" />
-            تسجيل الخروج
-          </button>
-        </aside>
-
-        <div className="p-4 sm:p-6 lg:p-10">
-          <Outlet />
         </div>
       </div>
     </div>
