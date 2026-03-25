@@ -284,10 +284,7 @@ function PublicLayout() {
         <footer className="mt-20 border-t border-brand-100 bg-slate-950 text-slate-200 dark:border-slate-800 dark:bg-slate-950">
           <div className="page-shell grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr_0.8fr]">
             <div className="text-center">
-              <div className="mx-auto inline-flex justify-center rounded-[30px] bg-white px-5 py-4 shadow-soft dark:bg-slate-900">
-                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-12 w-auto object-contain sm:h-14" />
-              </div>
-              <p className="mt-5 max-w-xl text-sm leading-8 text-slate-400">{footerDescription}</p>
+              <p className="max-w-xl text-sm leading-8 text-slate-400">{footerDescription}</p>
             </div>
 
             <div>

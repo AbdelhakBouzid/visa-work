@@ -41,7 +41,7 @@ const runSeed = async () => {
   const settings = await Settings.create({
     siteName: 'visa-work',
     siteDescription: 'منصة عربية حديثة لمتابعة فرص العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.',
-    logo: '/visa-work-logo.svg',
+    logo: '/logo.svg',
     footerText: 'visa-work - منصة عربية مهنية للمقالات والأدلة الخاصة بالعمل بالخارج.',
     contactEmail: 'contact@visa-work.com',
     socialLinks: {
