@@ -200,8 +200,8 @@ function PublicLayout() {
             </div>
 
             {isMenuOpen ? (
-              <div className="fixed inset-x-0 bottom-0 top-[5.6rem] z-50 overflow-hidden px-4 pb-4 lg:hidden">
-                <div className="h-full overflow-y-auto overscroll-contain rounded-[32px] border border-brand-100 bg-white/95 p-4 shadow-soft dark:border-slate-800 dark:bg-slate-950/95">
+              <div className="absolute inset-x-0 top-full z-50 px-4 pb-4 pt-2 lg:hidden">
+                <div className="max-h-[calc(100vh-7rem)] overflow-y-auto overscroll-contain rounded-[32px] border border-brand-100 bg-white/95 p-4 shadow-soft dark:border-slate-800 dark:bg-slate-950/95">
                   <div className="mb-4">
                     <SearchBar compact onSubmit={handleSearch} />
                   </div>
