@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useUi } from '../../contexts/UiContext';
 import CategoryBadge from './CategoryBadge';
 import { calculateReadingTime, formatLocalizedDate } from '../../utils/formatters';
+import { getArticleFeaturedImage } from '../../utils/articlePlaceholders';
 
 function ArticleCard({ article, featured = false }) {
   const { locale, t } = useUi();
@@ -19,7 +20,7 @@ function ArticleCard({ article, featured = false }) {
     >
       <Link to={`/article/${article.slug}`} className="block overflow-hidden">
         <img
-          src={article.featuredImage || '/seed/work-abroad.svg'}
+          src={getArticleFeaturedImage(article)}
           alt={article.title}
           loading="lazy"
           className={`w-full object-cover transition duration-500 group-hover:scale-105 ${

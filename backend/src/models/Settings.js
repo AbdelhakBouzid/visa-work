@@ -8,7 +8,7 @@ const settingsSchema = new mongoose.Schema(
     },
     siteDescription: {
       type: String,
-      default: 'منصة عربية متخصصة في العمل بالخارج والتأشيرات والهجرة القانونية.'
+      default: 'منصة عربية عملية تضم مقالات وأدلة وقوائم مراجعة حول العمل بالخارج وتأشيرات العمل والهجرة القانونية.'
     },
     logo: {
       type: String,
@@ -22,7 +22,7 @@ const settingsSchema = new mongoose.Schema(
     },
     footerText: {
       type: String,
-      default: 'visa-work - بوابتك العربية لفهم العمل بالخارج والتأشيرات.'
+      default: 'visa-work - مكتبة عربية عملية لفهم العمل بالخارج والتأشيرات والانتقال القانوني.'
     },
     contactEmail: {
       type: String,
@@ -31,15 +31,16 @@ const settingsSchema = new mongoose.Schema(
     home: {
       heroTitle: {
         type: String,
-        default: 'ابدأ رحلتك نحو العمل بالخارج بخطوات واضحة وموثوقة'
+        default: 'مكتبة عربية عملية لفهم العمل بالخارج وتأشيرات العمل دون تشويش'
       },
       heroSubtitle: {
         type: String,
-        default: 'مقالات عربية احترافية تساعدك في فرص العمل، تأشيرات العمل، الوثائق المطلوبة، وطرق دفع الرسوم بأمان.'
+        default:
+          'مقالات واضحة، أدلة قصيرة، وقوائم مراجعة تساعدك على البحث الآمن عن الوظائف، تجهيز الوثائق، والاستعداد للمقابلة.'
       },
       heroCtaText: {
         type: String,
-        default: 'استكشف أحدث المقالات'
+        default: 'تصفح المكتبة الآن'
       },
       featuredArticleIds: {
         type: [mongoose.Schema.Types.ObjectId],
@@ -52,14 +53,15 @@ const settingsSchema = new mongoose.Schema(
         default: []
       },
       sectionTitles: {
-        latest: { type: String, default: 'أحدث المقالات' },
-        featured: { type: String, default: 'مقالات مختارة' },
+        latest: { type: String, default: 'أحدث المواد' },
+        featured: { type: String, default: 'مختارات أساسية للبداية' },
         popular: { type: String, default: 'الأكثر قراءة' },
         workAbroad: { type: String, default: 'العمل بالخارج' },
         workVisa: { type: String, default: 'تأشيرة العمل' },
-        immigration: { type: String, default: 'أدلة الهجرة' },
-        visaPaymentMethods: { type: String, default: 'طرق دفع رسوم التأشيرة' },
-        requiredDocuments: { type: String, default: 'الوثائق المطلوبة' }
+        immigration: { type: String, default: 'الهجرة القانونية' },
+        visaPaymentMethods: { type: String, default: 'طرق دفع الرسوم' },
+        requiredDocuments: { type: String, default: 'الوثائق المطلوبة' },
+        tipsGuides: { type: String, default: 'نصائح وأدلة عملية' }
       }
     },
     newsletterEmails: {

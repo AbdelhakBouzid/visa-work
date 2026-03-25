@@ -10,6 +10,7 @@ import ShareButtons from '../../components/common/ShareButtons';
 import TableOfContents from '../../components/common/TableOfContents';
 import { useUi } from '../../contexts/UiContext';
 import { publicApi } from '../../services/api';
+import { getArticleFeaturedImage } from '../../utils/articlePlaceholders';
 import { addHeadingAnchors, generateTocFromHtml } from '../../utils/content';
 import { calculateReadingTime, formatLocalizedDate } from '../../utils/formatters';
 
@@ -79,7 +80,7 @@ function ArticlePage() {
             </div>
 
             <img
-              src={article.featuredImage || '/seed/work-abroad.svg'}
+              src={getArticleFeaturedImage(article)}
               alt={article.title}
               className="mt-8 h-[320px] w-full rounded-[32px] object-cover shadow-soft md:h-[460px]"
             />

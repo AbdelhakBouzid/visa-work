@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useUi } from '../../contexts/UiContext';
 import { formatLocalizedDate } from '../../utils/formatters';
+import { getArticleFeaturedImage } from '../../utils/articlePlaceholders';
 import { getLocalizedCategoryCopy } from '../../utils/i18n';
 
 function ArticleListItem({ article }) {
@@ -18,7 +19,7 @@ function ArticleListItem({ article }) {
       className="group flex items-start gap-4 rounded-[28px] border border-brand-100/70 bg-white/95 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-brand-200 hover:bg-brand-50/50 dark:border-slate-800 dark:bg-slate-900/95 dark:hover:border-brand-500/40 dark:hover:bg-brand-500/5"
     >
       <img
-        src={article.featuredImage || '/seed/work-abroad.svg'}
+        src={getArticleFeaturedImage(article)}
         alt={article.title}
         loading="lazy"
         className="h-24 w-24 flex-none rounded-2xl object-cover"

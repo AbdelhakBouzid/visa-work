@@ -5,29 +5,25 @@ import { syncContentLibrary } from './syncContentLibrary.js';
 
 loadEnv();
 
-const runSeed = async () => {
+const run = async () => {
   await connectDB();
 
   const result = await syncContentLibrary({
-    wipeCollections: true,
-    resetUsers: true,
     includeArticles: true,
     removeLegacySeed: true,
     forceHomepageCuration: true
   });
 
-  console.log('Seed completed successfully');
-  console.log(`Categories seeded: ${result.categories.length}`);
+  console.log(`Categories synced: ${result.categories.length}`);
   console.log(`Articles created: ${result.articleSync.created}`);
   console.log(`Articles updated: ${result.articleSync.updated}`);
   console.log(`Legacy sample articles removed: ${result.articleSync.removedLegacy}`);
-  console.log('Admin login is controlled by ADMIN_USER and ADMIN_PASS environment variables.');
-  console.log(`Settings created or updated: ${result.settings.siteName}`);
+  console.log(`Homepage settings ready: ${result.settings.siteName}`);
 
   await mongoose.connection.close();
 };
 
-runSeed().catch(async (error) => {
+run().catch(async (error) => {
   console.error(error);
   await mongoose.connection.close();
   process.exit(1);

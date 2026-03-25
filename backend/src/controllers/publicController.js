@@ -27,7 +27,7 @@ export const getHomeData = asyncHandler(async (req, res) => {
   ]);
 
   let featuredArticles = [];
-  let highlightedCategories = categories.slice(0, 4);
+  let highlightedCategories = categories.slice(0, 6);
 
   if (settings?.home?.featuredArticleIds?.length) {
     featuredArticles = await Article.find({
@@ -36,6 +36,11 @@ export const getHomeData = asyncHandler(async (req, res) => {
     })
       .populate(populateOptions)
       .lean();
+
+    const featuredOrder = new Map(settings.home.featuredArticleIds.map((id, index) => [String(id), index]));
+    featuredArticles.sort(
+      (left, right) => (featuredOrder.get(String(left._id)) ?? 0) - (featuredOrder.get(String(right._id)) ?? 0)
+    );
   }
 
   if (!featuredArticles.length) {
@@ -46,6 +51,11 @@ export const getHomeData = asyncHandler(async (req, res) => {
     highlightedCategories = categories.filter((category) =>
       settings.home.highlightedCategoryIds.some((id) => String(id) === String(category._id))
     );
+
+    const categoryOrder = new Map(settings.home.highlightedCategoryIds.map((id, index) => [String(id), index]));
+    highlightedCategories.sort(
+      (left, right) => (categoryOrder.get(String(left._id)) ?? 0) - (categoryOrder.get(String(right._id)) ?? 0)
+    );
   }
 
   const sectionSlugMap = [
@@ -53,7 +63,8 @@ export const getHomeData = asyncHandler(async (req, res) => {
     { key: 'workVisa', slug: 'work-visa' },
     { key: 'immigration', slug: 'immigration' },
     { key: 'visaPaymentMethods', slug: 'visa-payment-methods' },
-    { key: 'requiredDocuments', slug: 'required-documents' }
+    { key: 'requiredDocuments', slug: 'required-documents' },
+    { key: 'tipsGuides', slug: 'tips-guides' }
   ];
 
   const categorySections = await Promise.all(

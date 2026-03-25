@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/seed/index.js"
+    "seed": "node src/seed/index.js",
+    "content:sync": "node src/seed/syncContent.js"
   },
   "dependencies": {
     "@vercel/blob": "^1.1.1",
