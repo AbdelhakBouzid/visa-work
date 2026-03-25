@@ -1,7 +1,8 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import LoadingScreen from './components/common/LoadingScreen';
 import ProtectedRoute from './components/admin/ProtectedRoute';
+import { useUi } from './contexts/UiContext';
 import PublicLayout from './layouts/PublicLayout';
 import AdminLayout from './layouts/AdminLayout';
 
@@ -23,10 +24,14 @@ const SettingsAdminPage = lazy(() => import('./pages/admin/SettingsAdminPage'));
 const HomepageAdminPage = lazy(() => import('./pages/admin/HomepageAdminPage'));
 
 function App() {
+  const location = useLocation();
+  const { locale, isRtl } = useUi();
+
   useEffect(() => {
-    document.documentElement.lang = 'ar';
-    document.documentElement.dir = 'rtl';
-  }, []);
+    const isAdminRoute = location.pathname.startsWith('/admin');
+    document.documentElement.lang = isAdminRoute ? 'ar' : locale;
+    document.documentElement.dir = isAdminRoute ? 'rtl' : isRtl ? 'rtl' : 'ltr';
+  }, [location.pathname, locale, isRtl]);
 
   return (
     <Suspense fallback={<LoadingScreen fullScreen />}>

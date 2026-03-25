@@ -1,10 +1,10 @@
 import { Helmet } from 'react-helmet-async';
+import { useUi } from '../../contexts/UiContext';
 
 function Seo({ title, description, image, type = 'website' }) {
+  const { t } = useUi();
   const siteTitle = title ? `${title} | visa-work` : 'visa-work';
-  const siteDescription =
-    description ||
-    'منصة عربية متخصصة في العمل بالخارج وتأشيرات العمل والهجرة القانونية والوثائق المطلوبة.';
+  const siteDescription = description || t('meta.defaultDescription');
 
   return (
     <Helmet>

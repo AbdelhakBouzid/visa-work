@@ -8,12 +8,14 @@ import LoadingScreen from '../../components/common/LoadingScreen';
 import Seo from '../../components/common/Seo';
 import ShareButtons from '../../components/common/ShareButtons';
 import TableOfContents from '../../components/common/TableOfContents';
+import { useUi } from '../../contexts/UiContext';
 import { publicApi } from '../../services/api';
 import { addHeadingAnchors, generateTocFromHtml } from '../../utils/content';
-import { calculateReadingTime, formatArabicDate } from '../../utils/formatters';
+import { calculateReadingTime, formatLocalizedDate } from '../../utils/formatters';
 
 function ArticlePage() {
   const { slug } = useParams();
+  const { locale, t } = useUi();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -40,7 +42,7 @@ function ArticlePage() {
     return (
       <div className="page-shell py-20">
         <div className="surface-card p-10 text-center">
-          <h1 className="text-2xl font-bold text-slate-900">المقال غير موجود</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{t('pages.article.missing')}</h1>
         </div>
       </div>
     );
@@ -59,20 +61,20 @@ function ArticlePage() {
         <div className="grid gap-8 lg:grid-cols-[1fr_300px]">
           <div>
             <CategoryBadge category={article.category} />
-            <h1 className="mt-5 text-4xl font-black leading-tight text-slate-950 md:text-5xl">
+            <h1 className="mt-5 text-4xl font-black leading-tight text-slate-950 dark:text-white md:text-5xl">
               {article.title}
             </h1>
-            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 md:text-lg">{article.excerpt}</p>
+            <p className="mt-5 max-w-3xl text-base leading-8 text-slate-600 md:text-lg dark:text-slate-300">{article.excerpt}</p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-slate-500">
+            <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
               <span className="inline-flex items-center gap-2">
                 <UserRound className="h-4 w-4" />
-                {article.author?.name || 'فريق التحرير'}
+                {article.author?.name || t('common.editorialTeam')}
               </span>
-              <span>{formatArabicDate(article.publishedAt || article.createdAt)}</span>
+              <span>{formatLocalizedDate(article.publishedAt || article.createdAt, locale)}</span>
               <span className="inline-flex items-center gap-2">
                 <Clock3 className="h-4 w-4" />
-                {calculateReadingTime(article.content)} دقائق قراءة
+                {t('common.readingMinutes', { count: calculateReadingTime(article.content) })}
               </span>
             </div>
 
@@ -87,7 +89,7 @@ function ArticlePage() {
             </div>
 
             <div
-              className="article-content mt-10 rounded-[32px] border border-slate-200 bg-white p-6 shadow-soft md:p-10"
+              className="article-content mt-10 rounded-[32px] border border-slate-200 bg-white p-6 shadow-soft dark:border-slate-800 dark:bg-slate-900 md:p-10"
               dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
             />
           </div>
@@ -99,7 +101,7 @@ function ArticlePage() {
 
         {relatedArticles.length ? (
           <section className="mt-20">
-            <h2 className="section-title">مقالات ذات صلة</h2>
+            <h2 className="section-title">{t('common.relatedArticles')}</h2>
             <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {relatedArticles.map((relatedArticle) => (
                 <ArticleCard key={relatedArticle._id} article={relatedArticle} />

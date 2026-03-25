@@ -1,81 +1,53 @@
-export const utilityNavigation = [
-  { label: 'المقالات', to: '/articles' },
-  { label: 'من نحن', to: '/about' },
-  { label: 'اتصل بنا', to: '/contact' },
-  { label: 'سياسة الخصوصية', to: '/privacy' }
+import { getLocalizedCategoryCopy } from './i18n';
+
+export const buildUtilityNavigation = (t) => [
+  { label: t('nav.utility.articles'), to: '/articles' },
+  { label: t('nav.utility.about'), to: '/about' },
+  { label: t('nav.utility.contact'), to: '/contact' },
+  { label: t('nav.utility.privacy'), to: '/privacy' }
 ];
 
 const categoryGroupConfig = [
   {
     key: 'work-abroad',
-    label: 'العمل بالخارج',
-    description: 'ابدأ من فرص العمل، تحسين الملف المهني، والأدلة العملية التي تجهزك للتقديم بثقة.',
+    labelKey: 'nav.groups.workAbroad.label',
+    descriptionKey: 'nav.groups.workAbroad.description',
     primarySlug: 'work-abroad',
-    items: [
-      {
-        slug: 'work-abroad',
-        fallbackName: 'العمل بالخارج',
-        fallbackDescription: 'نصائح واستراتيجيات للبحث عن وظائف وفرص مهنية خارج بلدك.'
-      },
-      {
-        slug: 'tips-guides',
-        fallbackName: 'نصائح وأدلة',
-        fallbackDescription: 'أدلة تفصيلية تساعدك على فهم الإجراءات خطوة بخطوة.'
-      }
-    ]
+    items: [{ slug: 'work-abroad' }, { slug: 'tips-guides' }]
   },
   {
     key: 'visas',
-    label: 'التأشيرات',
-    description: 'كل ما تحتاجه لفهم تأشيرات العمل، الهجرة القانونية، وطرق دفع الرسوم عبر القنوات الرسمية.',
+    labelKey: 'nav.groups.visas.label',
+    descriptionKey: 'nav.groups.visas.description',
     primarySlug: 'work-visa',
-    items: [
-      {
-        slug: 'work-visa',
-        fallbackName: 'تأشيرة العمل',
-        fallbackDescription: 'كل ما يتعلق بتأشيرات العمل وإجراءاتها ومتطلباتها.'
-      },
-      {
-        slug: 'immigration',
-        fallbackName: 'الهجرة القانونية',
-        fallbackDescription: 'مقالات ودلائل عملية حول مسارات الهجرة القانونية والاندماج.'
-      },
-      {
-        slug: 'visa-payment-methods',
-        fallbackName: 'طرق دفع رسوم التأشيرة',
-        fallbackDescription: 'شرح وسائل الدفع الإلكتروني والمنصات الرسمية لرسوم التأشيرات.'
-      }
-    ]
+    items: [{ slug: 'work-visa' }, { slug: 'immigration' }, { slug: 'visa-payment-methods' }]
   },
   {
     key: 'guides',
-    label: 'الأدلة',
-    description: 'مرجع منظم للوثائق المطلوبة وكيفية تجهيز الملف الرسمي بشكل احترافي وواضح.',
+    labelKey: 'nav.groups.guides.label',
+    descriptionKey: 'nav.groups.guides.description',
     primarySlug: 'required-documents',
-    items: [
-      {
-        slug: 'required-documents',
-        fallbackName: 'الوثائق المطلوبة',
-        fallbackDescription: 'قوائم الوثائق المطلوبة ونصائح تجهيز الملفات الرسمية.'
-      }
-    ]
+    items: [{ slug: 'required-documents' }]
   }
 ];
 
-export function buildCategoryGroups(categories = []) {
+export function buildCategoryGroups(categories = [], locale = 'ar', t = (value) => value) {
   const categoriesBySlug = new Map(categories.map((category) => [category.slug, category]));
 
   return categoryGroupConfig.map((group) => ({
     ...group,
+    label: t(group.labelKey),
+    description: t(group.descriptionKey),
     href: `/category/${group.primarySlug}`,
     items: group.items.map((item) => {
       const category = categoriesBySlug.get(item.slug);
+      const localizedCopy = getLocalizedCategoryCopy(locale, item.slug);
 
       return {
         _id: category?._id || item.slug,
         slug: item.slug,
-        name: category?.name || item.fallbackName,
-        description: category?.description || item.fallbackDescription,
+        name: locale === 'ar' && category?.name ? category.name : localizedCopy.name,
+        description: locale === 'ar' && category?.description ? category.description : localizedCopy.description,
         href: `/category/${item.slug}`
       };
     })

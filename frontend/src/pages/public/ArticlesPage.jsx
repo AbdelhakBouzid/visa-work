@@ -7,11 +7,14 @@ import SearchBar from '../../components/common/SearchBar';
 import SectionHeading from '../../components/common/SectionHeading';
 import Seo from '../../components/common/Seo';
 import { useSite } from '../../contexts/SiteContext';
+import { useUi } from '../../contexts/UiContext';
 import { publicApi } from '../../services/api';
+import { getLocalizedCategoryCopy } from '../../utils/i18n';
 
 function ArticlesPage() {
   const navigate = useNavigate();
   const { categories } = useSite();
+  const { locale, t } = useUi();
   const [searchParams, setSearchParams] = useSearchParams();
   const [data, setData] = useState({ items: [], pagination: {} });
   const [loading, setLoading] = useState(true);
@@ -44,13 +47,13 @@ function ArticlesPage() {
 
   return (
     <>
-      <Seo title="المقالات" description="جميع مقالات visa-work حول العمل بالخارج وتأشيرات العمل والهجرة القانونية." />
+      <Seo title={t('pages.articles.title')} description={t('pages.articles.seoDescription')} />
 
       <section className="page-shell py-14">
         <SectionHeading
-          eyebrow="أرشيف المقالات"
-          title="مكتبة عربية متخصصة في العمل بالخارج والتأشيرات"
-          description="استعرض أحدث المقالات والأدلة العملية، أو قم بتصفية النتائج حسب التصنيف الذي يهمك."
+          eyebrow={t('pages.articles.eyebrow')}
+          title={t('pages.articles.heading')}
+          description={t('pages.articles.description')}
         />
 
         <div className="surface-card mb-8 grid gap-4 p-5 lg:grid-cols-[1fr_auto] lg:items-center">
@@ -62,10 +65,12 @@ function ArticlesPage() {
               type="button"
               onClick={() => updateQuery(1, '')}
               className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                !category ? 'bg-brand-700 text-white' : 'bg-slate-100 text-slate-600'
+                !category
+                  ? 'bg-brand-700 text-white dark:bg-brand-600'
+                  : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-300'
               }`}
             >
-              الكل
+              {t('common.all')}
             </button>
             {categories.map((item) => (
               <button
@@ -73,10 +78,12 @@ function ArticlesPage() {
                 type="button"
                 onClick={() => updateQuery(1, item.slug)}
                 className={`rounded-full px-4 py-2 text-sm font-semibold ${
-                  category === item.slug ? 'bg-brand-700 text-white' : 'bg-slate-100 text-slate-600'
+                  category === item.slug
+                    ? 'bg-brand-700 text-white dark:bg-brand-600'
+                    : 'bg-slate-100 text-slate-600 dark:bg-slate-900 dark:text-slate-300'
                 }`}
               >
-                {item.name}
+                {locale === 'ar' ? item.name : getLocalizedCategoryCopy(locale, item.slug).name}
               </button>
             ))}
           </div>
@@ -99,11 +106,11 @@ function ArticlesPage() {
           </>
         ) : (
           <div className="surface-card p-10 text-center">
-            <h2 className="text-2xl font-bold text-slate-900">لا توجد مقالات حالياً</h2>
-            <p className="mt-3 text-sm text-slate-600">
-              جرّب تغيير التصنيف أو العودة إلى{' '}
-              <Link to="/" className="font-semibold text-brand-700">
-                الصفحة الرئيسية
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('pages.articles.emptyTitle')}</h2>
+            <p className="mt-3 text-sm text-slate-600 dark:text-slate-300">
+              {t('pages.articles.emptyDescription')}{' '}
+              <Link to="/" className="font-semibold text-brand-700 dark:text-brand-200">
+                {t('pages.notFound.homeCta')}
               </Link>
               .
             </p>

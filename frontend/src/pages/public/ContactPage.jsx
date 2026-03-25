@@ -1,6 +1,7 @@
 import { Mail, MapPinned, Send } from 'lucide-react';
 import { useState } from 'react';
 import Seo from '../../components/common/Seo';
+import { useUi } from '../../contexts/UiContext';
 import { extractApiError, publicApi } from '../../services/api';
 
 const initialForm = {
@@ -10,6 +11,7 @@ const initialForm = {
 };
 
 function ContactPage() {
+  const { t } = useUi();
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
@@ -25,11 +27,11 @@ function ContactPage() {
     setStatus({ type: '', message: '' });
 
     try {
-      const response = await publicApi.submitContact(form);
-      setStatus({ type: 'success', message: response.message });
+      await publicApi.submitContact(form);
+      setStatus({ type: 'success', message: t('pages.contact.success') });
       setForm(initialForm);
     } catch (error) {
-      setStatus({ type: 'error', message: extractApiError(error, 'تعذر إرسال الرسالة.') });
+      setStatus({ type: 'error', message: extractApiError(error, t('pages.contact.error')) });
     } finally {
       setSubmitting(false);
     }
@@ -37,28 +39,28 @@ function ContactPage() {
 
   return (
     <>
-      <Seo title="اتصل بنا" description="تواصل مع منصة visa-work لاقتراح موضوعات أو إرسال استفسار." />
+      <Seo title={t('pages.contact.title')} description={t('pages.contact.seoDescription')} />
 
       <section className="page-shell py-14">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-[32px] bg-hero px-8 py-10 text-white shadow-soft">
-            <h1 className="text-4xl font-black">اتصل بنا</h1>
+            <h1 className="text-4xl font-black">{t('pages.contact.heading')}</h1>
             <p className="mt-4 text-sm leading-8 text-white/80 md:text-base">
-              إذا كانت لديك فكرة لمقال، سؤال يتعلق بالمحتوى، أو ملاحظة على المنصة، يسعدنا سماعك.
+              {t('pages.contact.description')}
             </p>
             <div className="mt-8 space-y-4 text-sm">
               <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
                 <Mail className="mt-1 h-5 w-5" />
                 <div>
-                  <p className="font-semibold">البريد الإلكتروني</p>
+                  <p className="font-semibold">{t('common.email')}</p>
                   <p className="text-white/75">contact@visa-work.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">
                 <MapPinned className="mt-1 h-5 w-5" />
                 <div>
-                  <p className="font-semibold">نطاق المنصة</p>
-                  <p className="text-white/75">محتوى عربي رقمي متخصص في فرص العمل والهجرة القانونية.</p>
+                  <p className="font-semibold">{t('pages.contact.platformScope')}</p>
+                  <p className="text-white/75">{t('pages.contact.platformScopeDescription')}</p>
                 </div>
               </div>
             </div>
@@ -67,35 +69,35 @@ function ContactPage() {
           <form onSubmit={handleSubmit} className="surface-card p-8">
             <div className="grid gap-5">
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">الاسم</label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">{t('common.name')}</label>
                 <input
                   name="name"
                   value={form.name}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500"
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">البريد الإلكتروني</label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">{t('common.email')}</label>
                 <input
                   type="email"
                   name="email"
                   value={form.email}
                   onChange={handleChange}
                   required
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500"
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                 />
               </div>
               <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-700">الرسالة</label>
+                <label className="mb-2 block text-sm font-semibold text-slate-700 dark:text-slate-200">{t('common.message')}</label>
                 <textarea
                   name="message"
                   value={form.message}
                   onChange={handleChange}
                   required
                   rows={6}
-                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500"
+                  className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-950 dark:text-white"
                 />
               </div>
             </div>
@@ -103,10 +105,10 @@ function ContactPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-800 disabled:opacity-60"
+              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-brand-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-brand-800 disabled:opacity-60 dark:bg-brand-600 dark:hover:bg-brand-500"
             >
               <Send className="h-4 w-4" />
-              {submitting ? 'جارٍ الإرسال...' : 'إرسال الرسالة'}
+              {submitting ? t('common.sending') : t('common.sendMessage')}
             </button>
 
             {status.message ? (

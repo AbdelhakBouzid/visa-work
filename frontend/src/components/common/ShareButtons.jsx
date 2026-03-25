@@ -1,13 +1,15 @@
 import { Facebook, Linkedin, Link2, MessageCircle, Twitter } from 'lucide-react';
+import { useUi } from '../../contexts/UiContext';
 
 const openShareWindow = (url) => {
   window.open(url, '_blank', 'noopener,noreferrer,width=640,height=640');
 };
 
 function ShareButtons({ url, title }) {
+  const { t } = useUi();
   const shareLinks = [
     {
-      label: 'واتساب',
+      label: t('share.whatsapp'),
       icon: MessageCircle,
       action: () => openShareWindow(`https://wa.me/?text=${encodeURIComponent(`${title} ${url}`)}`)
     },
@@ -20,12 +22,12 @@ function ShareButtons({ url, title }) {
         )
     },
     {
-      label: 'فيسبوك',
+      label: t('share.facebook'),
       icon: Facebook,
       action: () => openShareWindow(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`)
     },
     {
-      label: 'لينكدإن',
+      label: t('share.linkedin'),
       icon: Linkedin,
       action: () =>
         openShareWindow(
@@ -45,7 +47,7 @@ function ShareButtons({ url, title }) {
           key={label}
           type="button"
           onClick={action}
-          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
+          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-200"
         >
           <Icon className="h-4 w-4" />
           {label}
@@ -54,10 +56,10 @@ function ShareButtons({ url, title }) {
       <button
         type="button"
         onClick={copyLink}
-        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-brand-300 hover:text-brand-700"
+        className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 transition hover:border-brand-300 hover:text-brand-700 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-200"
       >
         <Link2 className="h-4 w-4" />
-        نسخ الرابط
+        {t('common.copyLink')}
       </button>
     </div>
   );

@@ -1,14 +1,22 @@
-export const formatArabicDate = (dateValue) => {
+const localeMap = {
+  ar: 'ar-EG',
+  fr: 'fr-FR',
+  en: 'en-US'
+};
+
+export const formatLocalizedDate = (dateValue, locale = 'ar') => {
   if (!dateValue) {
     return '';
   }
 
-  return new Intl.DateTimeFormat('ar-EG', {
+  return new Intl.DateTimeFormat(localeMap[locale] || localeMap.ar, {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   }).format(new Date(dateValue));
 };
+
+export const formatArabicDate = (dateValue) => formatLocalizedDate(dateValue, 'ar');
 
 export const stripHtml = (value = '') =>
   value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();

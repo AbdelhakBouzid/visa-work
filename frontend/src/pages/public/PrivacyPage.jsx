@@ -1,34 +1,25 @@
 import Seo from '../../components/common/Seo';
+import { useUi } from '../../contexts/UiContext';
 
 function PrivacyPage() {
+  const { t } = useUi();
+
   return (
     <>
-      <Seo title="سياسة الخصوصية" description="سياسة الخصوصية الخاصة بمنصة visa-work." />
+      <Seo title={t('pages.privacy.title')} description={t('pages.privacy.seoDescription')} />
 
       <section className="page-shell py-14">
         <div className="surface-card p-8 md:p-10">
-          <h1 className="text-4xl font-black text-slate-950">سياسة الخصوصية</h1>
+          <h1 className="text-4xl font-black text-slate-950 dark:text-white">{t('pages.privacy.title')}</h1>
           <div className="article-content mt-8">
-            <h2>جمع البيانات</h2>
-            <p>
-              نقوم بجمع البيانات التي يرسلها المستخدم طوعاً عبر نماذج التواصل أو الاشتراك في النشرة البريدية،
-              مثل الاسم والبريد الإلكتروني ومحتوى الرسالة.
-            </p>
-            <h2>استخدام البيانات</h2>
-            <p>
-              تُستخدم البيانات لتحسين تجربة المستخدم، الرد على الاستفسارات، وإرسال التحديثات المتعلقة بالمحتوى
-              إذا قام المستخدم بالاشتراك في النشرة.
-            </p>
-            <h2>حماية المعلومات</h2>
-            <p>
-              نعتمد ممارسات معقولة لحماية البيانات، ولا نبيع معلومات المستخدمين لأطراف ثالثة. تبقى مسؤولية
-              المستخدم التأكد من مشاركة بياناته عبر القنوات الرسمية فقط.
-            </p>
-            <h2>الروابط الخارجية</h2>
-            <p>
-              قد تحتوي المنصة على روابط لمواقع خارجية. لسنا مسؤولين عن سياسات الخصوصية أو محتوى تلك المواقع،
-              لذلك ننصح بمراجعتها قبل مشاركة أي بيانات حساسة.
-            </p>
+            <h2>{t('pages.privacy.dataCollectionTitle')}</h2>
+            <p>{t('pages.privacy.dataCollectionBody')}</p>
+            <h2>{t('pages.privacy.dataUsageTitle')}</h2>
+            <p>{t('pages.privacy.dataUsageBody')}</p>
+            <h2>{t('pages.privacy.protectionTitle')}</h2>
+            <p>{t('pages.privacy.protectionBody')}</p>
+            <h2>{t('pages.privacy.externalLinksTitle')}</h2>
+            <p>{t('pages.privacy.externalLinksBody')}</p>
           </div>
         </div>
       </section>
