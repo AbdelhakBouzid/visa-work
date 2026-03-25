@@ -87,11 +87,21 @@ function PublicLayout() {
         <header className="sticky top-0 z-40 border-b border-brand-100/80 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/85">
           <div className="page-shell py-4">
             <div className="flex items-center justify-between gap-4 lg:gap-6">
-              <Link to="/" className="min-w-0 flex-none" onClick={closeMobileMenu}>
-                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-14 w-auto sm:h-16" />
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen((current) => !current)}
+                className="order-1 inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 shadow-sm transition hover:border-brand-200 hover:text-brand-900 dark:border-slate-700 dark:bg-slate-900 dark:text-brand-200 dark:hover:border-brand-500 lg:hidden"
+                aria-expanded={isMenuOpen}
+                aria-label={isMenuOpen ? t('controls.closeMenu') : t('controls.openMenu')}
+              >
+                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+
+              <Link to="/" className="order-2 min-w-0 flex-none lg:order-1" onClick={closeMobileMenu}>
+                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-12 w-auto object-contain sm:h-14" />
               </Link>
 
-              <nav className="hidden items-center gap-3 lg:flex">
+              <nav className="order-2 hidden items-center gap-3 lg:flex">
                 {categoryGroups.map((group) => (
                   <div key={group.key} className="group relative">
                     <button
@@ -137,26 +147,17 @@ function PublicLayout() {
                 ))}
               </nav>
 
-              <div className="hidden min-w-0 flex-1 lg:block">
+              <div className="order-3 hidden min-w-0 flex-1 lg:block">
                 <div className="mr-auto max-w-sm">
                   <SearchBar compact onSubmit={handleSearch} />
                 </div>
               </div>
 
-              <div className="hidden items-center gap-2 xl:flex">
+              <div className="order-4 hidden items-center gap-2 xl:flex">
                 {renderLocaleSwitcher()}
                 {renderThemeToggle()}
               </div>
 
-              <button
-                type="button"
-                onClick={() => setIsMenuOpen((current) => !current)}
-                className="inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 shadow-sm transition hover:border-brand-200 hover:text-brand-900 dark:border-slate-700 dark:bg-slate-900 dark:text-brand-200 dark:hover:border-brand-500 lg:hidden"
-                aria-expanded={isMenuOpen}
-                aria-label={isMenuOpen ? t('controls.closeMenu') : t('controls.openMenu')}
-              >
-                {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
             </div>
 
             <div className="mt-4 hidden items-center justify-between gap-6 border-t border-brand-100/70 pt-4 lg:flex dark:border-slate-800">
@@ -269,7 +270,7 @@ function PublicLayout() {
           <div className="page-shell grid gap-10 py-12 lg:grid-cols-[1.15fr_0.85fr_0.8fr]">
             <div>
               <div className="inline-flex rounded-[30px] bg-white px-5 py-4 shadow-soft dark:bg-slate-900">
-                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-14 w-auto sm:h-16" />
+                <img src={logoSrc} alt={settings?.siteName || 'visa-work'} className="h-12 w-auto object-contain sm:h-14" />
               </div>
               <p className="mt-5 max-w-xl text-sm leading-8 text-slate-400">{footerDescription}</p>
             </div>
