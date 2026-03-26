@@ -61,7 +61,24 @@ const renderSection = (section) => {
   return blocks.filter(Boolean).join('\n');
 };
 
-export const buildArticleContent = (sections = []) => sections.map(renderSection).filter(Boolean).join('\n\n');
+const renderIntro = (intro) => {
+  if (!intro) {
+    return '';
+  }
+
+  return `<p>${escapeHtml(intro)}</p>`;
+};
+
+const renderConclusion = (conclusion) => {
+  if (!conclusion) {
+    return '';
+  }
+
+  return `<h2>خلاصة عملية</h2>\n<p>${escapeHtml(conclusion)}</p>`;
+};
+
+export const buildArticleContent = ({ intro = '', sections = [], conclusion = '' } = {}) =>
+  [renderIntro(intro), ...sections.map(renderSection), renderConclusion(conclusion)].filter(Boolean).join('\n\n');
 
 export const createSeedArticle = ({
   title,
@@ -75,12 +92,14 @@ export const createSeedArticle = ({
   featuredImage = '',
   views = 0,
   publishedAt = null,
-  sections = []
+  sections = [],
+  intro = excerpt,
+  conclusion = 'تعامل مع هذا الدليل كنقطة بداية عملية، ثم راجع التعليمات الرسمية الأحدث الخاصة بوجهتك وحالتك قبل اتخاذ أي قرار نهائي.'
 }) => ({
   title,
   slug,
   excerpt,
-  content: buildArticleContent(sections),
+  content: buildArticleContent({ intro, sections, conclusion }),
   featuredImage,
   categorySlug,
   tags,

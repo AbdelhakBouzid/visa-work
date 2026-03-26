@@ -326,8 +326,8 @@ function PublicLayout() {
               <div>
                 <h3 className="text-sm font-bold text-white">{t('nav.connect')}</h3>
                 <div className="mt-4 grid gap-3 text-sm text-slate-400">
-                  <a href={`mailto:${settings?.contactEmail || 'contact@visa-work.com'}`} className="hover:text-white">
-                    {settings?.contactEmail || 'contact@visa-work.com'}
+                  <a href={`mailto:${settings?.contactEmail || 'contact.visa.work@gmail.com'}`} className="hover:text-white">
+                    {settings?.contactEmail || 'contact.visa.work@gmail.com'}
                   </a>
                   {Object.entries(settings?.socialLinks || {}).map(([key, value]) =>
                     value ? (

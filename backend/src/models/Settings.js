@@ -26,7 +26,7 @@ const settingsSchema = new mongoose.Schema(
     },
     contactEmail: {
       type: String,
-      default: 'contact@visa-work.com'
+      default: 'contact.visa.work@gmail.com'
     },
     home: {
       heroTitle: {

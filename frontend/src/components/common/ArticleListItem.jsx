@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useUi } from '../../contexts/UiContext';
-import { formatLocalizedDate } from '../../utils/formatters';
+import { cleanExcerpt, formatLocalizedDate } from '../../utils/formatters';
 import { getArticleFeaturedImage } from '../../utils/articlePlaceholders';
 import { getLocalizedCategoryCopy } from '../../utils/i18n';
 
@@ -29,7 +29,7 @@ function ArticleListItem({ article }) {
         <h3 className="clamp-2 text-base font-bold text-slate-900 transition group-hover:text-brand-700 dark:text-white dark:group-hover:text-brand-200">
           {article.title}
         </h3>
-        <p className="mt-2 clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{article.excerpt}</p>
+        <p className="mt-2 clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-300">{cleanExcerpt(article.excerpt, 150)}</p>
         <p className="mt-2 text-xs text-slate-400 dark:text-slate-500">
           {formatLocalizedDate(article.publishedAt || article.createdAt, locale)}
         </p>

@@ -2,7 +2,7 @@ import { Clock3, Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useUi } from '../../contexts/UiContext';
 import CategoryBadge from './CategoryBadge';
-import { calculateReadingTime, formatLocalizedDate } from '../../utils/formatters';
+import { calculateReadingTime, cleanExcerpt, formatLocalizedDate } from '../../utils/formatters';
 import { getArticleFeaturedImage } from '../../utils/articlePlaceholders';
 
 function ArticleCard({ article, featured = false }) {
@@ -42,7 +42,19 @@ function ArticleCard({ article, featured = false }) {
             {article.title}
           </h3>
         </Link>
-        <p className="clamp-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{article.excerpt}</p>
+        <p className="clamp-3 text-sm leading-7 text-slate-600 dark:text-slate-300">{cleanExcerpt(article.excerpt, 210)}</p>
+        {article.tags?.length ? (
+          <div className="flex flex-wrap gap-2">
+            {article.tags.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        ) : null}
         <div className="mt-auto flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           <span>{article.author?.name || t('common.editorialTeam')}</span>
           <span className="inline-flex items-center gap-1">
