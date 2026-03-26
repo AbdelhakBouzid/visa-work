@@ -53,7 +53,7 @@ function ContactPage() {
                 <Mail className="mt-1 h-5 w-5" />
                 <div>
                   <p className="font-semibold">{t('common.email')}</p>
-                  <p className="text-white/75">contact@visa-work.com</p>
+                  <p className="text-white/75">contact.visa.work@gmail.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-3 rounded-2xl bg-white/10 p-4">

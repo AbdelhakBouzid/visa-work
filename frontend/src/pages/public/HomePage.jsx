@@ -60,6 +60,11 @@ function HomePage() {
     locale === 'ar' ? settings?.home?.sectionTitles?.latest || t('home.latestTitle') : t('home.latestTitle');
   const popularTitle =
     locale === 'ar' ? settings?.home?.sectionTitles?.popular || t('home.popularTitle') : t('home.popularTitle');
+  const heroHighlights = [
+    { label: 'مقال ودليل منشور', value: latestArticles.length + featuredArticles.length + categorySections.reduce((acc, section) => acc + section.articles.length, 0) },
+    { label: 'تصنيف متخصص', value: categories.length || 0 },
+    { label: 'محاور عملية', value: 11 }
+  ];
 
   return (
     <>
@@ -84,6 +89,15 @@ function HomePage() {
               <Link to="/articles" className="brand-primary-button">
                 {heroCta}
               </Link>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {heroHighlights.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/20 bg-white/10 px-4 py-2">
+                  <p className="text-xl font-black leading-none">{item.value}+</p>
+                  <p className="mt-1 text-xs text-white/80">{item.label}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -34,3 +34,12 @@ export const createExcerpt = (html = '', max = 160) => {
 
   return `${text.slice(0, max).trim()}...`;
 };
+
+export const cleanExcerpt = (value = '', max = 190) => {
+  const text = stripHtml(String(value).replace(/[•\-–—]+/g, ' ')).replace(/\s+/g, ' ').trim();
+  if (text.length <= max) {
+    return text;
+  }
+
+  return `${text.slice(0, max).trim()}…`;
+};
